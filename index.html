@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>KEYBUDDY - Typing Game</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: { primary: '#2ECC71', secondary: '#E74C3C' },
+            borderRadius: {
+              none: '0px',
+              sm: '4px',
+              DEFAULT: '8px',
+              md: '12px',
+              lg: '16px',
+              xl: '20px',
+              '2xl': '24px',
+              '3xl': '32px',
+              full: '9999px',
+              button: '8px',
+            },
+          },
+        },
+      };
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;700&family=Poppins:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="min-h-screen flex flex-col">
+    <div
+      id="intro-page"
+      class="fixed inset-0 bg-white z-50 flex items-center justify-center"
+    >
+      <div class="max-w-3xl w-full px-6">
+        <div class="text-center mb-12">
+          <h1 class="font-['Pacifico'] text-5xl text-gray-800 mb-4">
+            KEYBUDDY
+          </h1>
+          <p class="text-gray-600 text-lg">
+            Master your typing skills through 5 exciting levels
+          </p>
+        </div>
+        <div class="bg-white rounded-xl shadow-lg p-8 mb-8">
+          <div class="grid md:grid-cols-2 gap-8">
+            <div>
+              <h2 class="text-2xl font-bold text-gray-800 mb-6">How to Play</h2>
+              <ul class="space-y-4">
+                <li class="flex items-start">
+                  <div
+                    class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-1"
+                  >
+                    <i class="ri-keyboard-line text-blue-600"></i>
+                  </div>
+                  <div class="ml-4">
+                    <h3 class="font-medium text-gray-800">Type the Words</h3>
+                    <p class="text-gray-600">
+                      Type each word correctly and press space to continue
+                    </p>
+                  </div>
+                </li>
+                <li class="flex items-start">
+                  <div
+                    class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-1"
+                  >
+                    <i class="ri-timer-line text-green-600"></i>
+                  </div>
+                  <div class="ml-4">
+                    <h3 class="font-medium text-gray-800">Beat the Clock</h3>
+                    <p class="text-gray-600">
+                      Complete each level within the time limit
+                    </p>
+                  </div>
+                </li>
+                <li class="flex items-start">
+                  <div
+                    class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0 mt-1"
+                  >
+                    <i class="ri-speed-up-line text-purple-600"></i>
+                  </div>
+                  <div class="ml-4">
+                    <h3 class="font-medium text-gray-800">
+                      Progress Through Levels
+                    </h3>
+                    <p class="text-gray-600">
+                      Each level increases in difficulty and complexity
+                    </p>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h2 class="text-2xl font-bold text-gray-800 mb-6">
+                Level Overview
+              </h2>
+              <div class="space-y-4">
+                <div class="bg-gray-50 p-4 rounded-lg">
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="font-medium text-gray-800">Level 1</span>
+                    <span class="text-sm text-gray-500">60 seconds</span>
+                  </div>
+                  <div class="h-2 bg-gray-200 rounded-full">
+                    <div class="h-full w-1/5 bg-blue-500 rounded-full"></div>
+                  </div>
+                </div>
+                <div class="bg-gray-50 p-4 rounded-lg">
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="font-medium text-gray-800">Level 2</span>
+                    <span class="text-sm text-gray-500">55 seconds</span>
+                  </div>
+                  <div class="h-2 bg-gray-200 rounded-full">
+                    <div class="h-full w-2/5 bg-blue-500 rounded-full"></div>
+                  </div>
+                </div>
+                <div class="bg-gray-50 p-4 rounded-lg">
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="font-medium text-gray-800">Level 3</span>
+                    <span class="text-sm text-gray-500">50 seconds</span>
+                  </div>
+                  <div class="h-2 bg-gray-200 rounded-full">
+                    <div class="h-full w-3/5 bg-blue-500 rounded-full"></div>
+                  </div>
+                </div>
+                <div class="bg-gray-50 p-4 rounded-lg">
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="font-medium text-gray-800">Level 4</span>
+                    <span class="text-sm text-gray-500">45 seconds</span>
+                  </div>
+                  <div class="h-2 bg-gray-200 rounded-full">
+                    <div class="h-full w-4/5 bg-blue-500 rounded-full"></div>
+                  </div>
+                </div>
+                <div class="bg-gray-50 p-4 rounded-lg">
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="font-medium text-gray-800">Level 5</span>
+                    <span class="text-sm text-gray-500">40 seconds</span>
+                  </div>
+                  <div class="h-2 bg-gray-200 rounded-full">
+                    <div class="h-full w-full bg-blue-500 rounded-full"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="text-center">
+          <button
+            id="start-game"
+            class="bg-primary text-white text-lg py-4 px-12 rounded-button font-medium hover:bg-opacity-90 transition-all whitespace-nowrap inline-flex items-center gap-2"
+          >
+            Start Game
+            <i class="ri-arrow-right-line"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    <header class="bg-white shadow-sm py-4">
+      <div class="container mx-auto px-4 flex justify-between items-center">
+        <h1 class="text-3xl font-['Pacifico'] text-gray-800">KEYBUDDY</h1>
+        <div class="flex items-center gap-8">
+          <div class="flex items-center gap-4">
+            <span class="text-sm font-medium text-gray-600">Level:</span>
+            <span id="current-level" class="text-lg font-bold text-gray-800"
+              >1</span
+            >
+            <span class="text-gray-400">/</span>
+            <span class="text-sm text-gray-500">5</span>
+          </div>
+          <div class="flex items-center gap-4">
+            <span class="text-sm font-medium text-gray-600">Time:</span>
+            <span id="timer" class="text-lg font-bold text-gray-800">60</span>
+            <span class="text-sm text-gray-500">s</span>
+          </div>
+          <!-- Added stats to navbar -->
+          <div class="flex items-center gap-4">
+            <span class="text-sm font-medium text-gray-600">Speed:</span>
+            <span id="typing-speed" class="text-lg font-bold text-gray-800"
+              >0 WPM</span
+            >
+          </div>
+          <div class="flex items-center gap-4">
+            <span class="text-sm font-medium text-gray-600">Accuracy:</span>
+            <span id="accuracy" class="text-lg font-bold text-gray-800"
+              >100%</span
+            >
+          </div>
+          <div class="flex items-center gap-4">
+            <span class="text-sm font-medium text-gray-600">Score:</span>
+            <span id="score" class="text-lg font-bold text-gray-800">0</span>
+          </div>
+        </div>
+      </div>
+    </header>
+    <main class="flex-grow flex flex-col items-center justify-center4">
+      <div class="container mx-auto max-w-4xl">
+        <!-- Level progress indicator -->
+        <div class="mb-8 px-4">
+          <div class="level-indicator">
+            <div
+              class="level-progress"
+              id="level-progress"
+              style="width: 0%"
+            ></div>
+            <div class="level-marker active" style="left: 0%"></div>
+            <div class="level-marker" style="left: 25%"></div>
+            <div class="level-marker" style="left: 50%"></div>
+            <div class="level-marker" style="left: 75%"></div>
+            <div class="level-marker" style="left: 100%"></div>
+          </div>
+        </div>
+        <!-- Text display area -->
+        <div class="bg-white rounded-lg shadow-md p-6 text-display-container">
+          <div
+            id="text-display"
+            class="typing-text text-xl leading-relaxed text-gray-700"
+          ></div>
+          <!-- Progress bar -->
+          <div class="progress-bar mb-6">
+            <div
+              id="progress-fill"
+              class="progress-fill bg-primary"
+              style="width: 0%"
+            ></div>
+          </div>
+        </div>
+        <!-- Keyboard -->
+        <div class="keyboard-container mx-auto">
+          <!-- Row 1 -->
+          <div class="flex justify-center gap-1 mb-1">
+            <div
+              class="key flex items-center justify-center"
+              data-key="Backquote"
+            >
+              `
+            </div>
+            <div class="key flex items-center justify-center" data-key="Digit1">
+              1
+            </div>
+            <div class="key flex items-center justify-center" data-key="Digit2">
+              2
+            </div>
+            <div class="key flex items-center justify-center" data-key="Digit3">
+              3
+            </div>
+            <div class="key flex items-center justify-center" data-key="Digit4">
+              4
+            </div>
+            <div class="key flex items-center justify-center" data-key="Digit5">
+              5
+            </div>
+            <div class="key flex items-center justify-center" data-key="Digit6">
+              6
+            </div>
+            <div class="key flex items-center justify-center" data-key="Digit7">
+              7
+            </div>
+            <div class="key flex items-center justify-center" data-key="Digit8">
+              8
+            </div>
+            <div class="key flex items-center justify-center" data-key="Digit9">
+              9
+            </div>
+            <div class="key flex items-center justify-center" data-key="Digit0">
+              0
+            </div>
+            <div class="key flex items-center justify-center" data-key="Minus">
+              -
+            </div>
+            <div class="key flex items-center justify-center" data-key="Equal">
+              =
+            </div>
+            <div
+              class="key key-wide flex items-center justify-center px-3"
+              data-key="Backspace"
+            >
+              ⌫
+            </div>
+          </div>
+          <!-- Row 2 -->
+          <div class="flex justify-center gap-1 mb-1">
+            <div
+              class="key key-wide flex items-center justify-center px-3"
+              data-key="Tab"
+            >
+              Tab
+            </div>
+            <div class="key flex items-center justify-center" data-key="KeyQ">
+              Q
+            </div>
+            <div class="key flex items-center justify-center" data-key="KeyW">
+              W
+            </div>
+            <div class="key flex items-center justify-center" data-key="KeyE">
+              E
+            </div>
+            <div class="key flex items-center justify-center" data-key="KeyR">
+              R
+            </div>
+            <div class="key flex items-center justify-center" data-key="KeyT">
+              T
+            </div>
+            <div class="key flex items-center justify-center" data-key="KeyY">
+              Y
+            </div>
+            <div class="key flex items-center justify-center" data-key="KeyU">
+              U
+            </div>
+            <div class="key flex items-center justify-center" data-key="KeyI">
+              I
+            </div>
+            <div class="key flex items-center justify-center" data-key="KeyO">
+              O
+            </div>
+            <div class="key flex items-center justify-center" data-key="KeyP">
+              P
+            </div>
+            <div
+              class="key flex items-center justify-center"
+              data-key="BracketLeft"
+            >
+              [
+            </div>
+            <div
+              class="key flex items-center justify-center"
+              data-key="BracketRight"
+            >
+              ]
+            </div>
+            <div
+              class="key flex items-center justify-center"
+              data-key="Backslash"
+            >
+              \
+            </div>
+          </div>
+          <!-- Row 3 -->
+          <div class="flex justify-center gap-1 mb-1">
+            <div
+              class="key key-wide flex items-center justify-center px-3"
+              data-key="CapsLock"
+            >
+              Caps
+            </div>
+            <div class="key flex items-center justify-center" data-key="KeyA">
+              A
+            </div>
+            <div class="key flex items-center justify-center" data-key="KeyS">
+              S
+            </div>
+            <div class="key flex items-center justify-center" data-key="KeyD">
+              D
+            </div>
+            <div class="key flex items-center justify-center" data-key="KeyF">
+              F
+            </div>
+            <div class="key flex items-center justify-center" data-key="KeyG">
+              G
+            </div>
+            <div class="key flex items-center justify-center" data-key="KeyH">
+              H
+            </div>
+            <div class="key flex items-center justify-center" data-key="KeyJ">
+              J
+            </div>
+            <div class="key flex items-center justify-center" data-key="KeyK">
+              K
+            </div>
+            <div class="key flex items-center justify-center" data-key="KeyL">
+              L
+            </div>
+            <div
+              class="key flex items-center justify-center"
+              data-key="Semicolon"
+            >
+              ;
+            </div>
+            <div class="key flex items-center justify-center" data-key="Quote">
+              '
+            </div>
+            <div
+              class="key key-wide flex items-center justify-center px-3"
+              data-key="Enter"
+            >
+              Enter
+            </div>
+          </div>
+          <!-- Row 4 -->
+          <div class="flex justify-center gap-1 mb-1">
+            <div
+              class="key key-wide flex items-center justify-center px-3"
+              data-key="ShiftLeft"
+            >
+              Shift
+            </div>
+            <div class="key flex items-center justify-center" data-key="KeyZ">
+              Z
+            </div>
+            <div class="key flex items-center justify-center" data-key="KeyX">
+              X
+            </div>
+            <div class="key flex items-center justify-center" data-key="KeyC">
+              C
+            </div>
+            <div class="key flex items-center justify-center" data-key="KeyV">
+              V
+            </div>
+            <div class="key flex items-center justify-center" data-key="KeyB">
+              B
+            </div>
+            <div class="key flex items-center justify-center" data-key="KeyN">
+              N
+            </div>
+            <div class="key flex items-center justify-center" data-key="KeyM">
+              M
+            </div>
+            <div class="key flex items-center justify-center" data-key="Comma">
+              ,
+            </div>
+            <div class="key flex items-center justify-center" data-key="Period">
+              .
+            </div>
+            <div class="key flex items-center justify-center" data-key="Slash">
+              /
+            </div>
+            <div
+              class="key key-wide flex items-center justify-center px-3"
+              data-key="ShiftRight"
+            >
+              Shift
+            </div>
+          </div>
+          <!-- Row 5 -->
+          <div class="flex justify-center gap-1">
+            <div
+              class="key key-wide flex items-center justify-center px-2"
+              data-key="ControlLeft"
+            >
+              Ctrl
+            </div>
+            <div
+              class="key key-wide flex items-center justify-center px-2"
+              data-key="MetaLeft"
+            >
+              Win
+            </div>
+            <div
+              class="key key-wide flex items-center justify-center px-2"
+              data-key="AltLeft"
+            >
+              Alt
+            </div>
+            <div
+              class="key key-space flex items-center justify-center"
+              data-key="Space"
+            >
+              Space
+            </div>
+            <div
+              class="key key-wide flex items-center justify-center px-2"
+              data-key="AltRight"
+            >
+              Alt
+            </div>
+            <div
+              class="key key-wide flex items-center justify-center px-2"
+              data-key="MetaRight"
+            >
+              Win
+            </div>
+            <div
+              class="key key-wide flex items-center justify-center px-2"
+              data-key="ControlRight"
+            >
+              Ctrl
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <!-- Game completion modal (hidden by default) -->
+    <div
+      id="completion-modal"
+      class="fixed inset-0 flex items-center justify-center z-50 hidden"
+    >
+      <div class="modal-overlay absolute inset-0"></div>
+      <div
+        class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 z-10 transform transition-all"
+      >
+        <div class="p-6">
+          <div class="text-center mb-6">
+            <div
+              class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4"
+            >
+              <i class="ri-check-line ri-2x text-primary"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">
+              Congratulations!
+            </h2>
+            <p class="text-gray-600">
+              You've completed all 5 levels of KEYBUDDY.
+            </p>
+          </div>
+          <div class="grid grid-cols-2 gap-4 mb-6">
+            <div class="bg-gray-50 p-4 rounded">
+              <div class="text-sm text-gray-500">Final Score</div>
+              <div id="modal-score" class="text-xl font-bold text-gray-800">
+                0
+              </div>
+            </div>
+            <div class="bg-gray-50 p-4 rounded">
+              <div class="text-sm text-gray-500">Typing Speed</div>
+              <div id="modal-speed" class="text-xl font-bold text-gray-800">
+                0 WPM
+              </div>
+            </div>
+            <div class="bg-gray-50 p-4 rounded">
+              <div class="text-sm text-gray-500">Accuracy</div>
+              <div id="modal-accuracy" class="text-xl font-bold text-gray-800">
+                0%
+              </div>
+            </div>
+            <div class="bg-gray-50 p-4 rounded">
+              <div class="text-sm text-gray-500">Time</div>
+              <div id="modal-time" class="text-xl font-bold text-gray-800">
+                0s
+              </div>
+            </div>
+          </div>
+          <div class="flex flex-col gap-3">
+            <button
+              id="view-leaderboard"
+              class="w-full bg-primary text-white py-3 px-4 rounded-button font-medium hover:bg-opacity-90 transition-all whitespace-nowrap"
+            >
+              View Leaderboard
+            </button>
+            <button
+              id="play-again"
+              class="w-full bg-gray-100 text-gray-700 py-3 px-4 rounded-button font-medium hover:bg-gray-200 transition-all whitespace-nowrap"
+            >
+              Play Again
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Level Completion Modal -->
+    <div
+      id="level-completion-modal"
+      class="fixed inset-0 flex items-center justify-center z-50 hidden"
+    >
+      <div class="modal-overlay absolute inset-0 bg-black bg-opacity-50"></div>
+      <div
+        class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 z-10 transform transition-all"
+      >
+        <div class="p-6">
+          <div class="text-center mb-6">
+            <div
+              class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4"
+            >
+              <i class="ri-trophy-line ri-2x text-primary"></i>
+            </div>
+            <h2
+              id="level-completion-message"
+              class="text-2xl font-bold text-gray-800 mb-2"
+            >
+              Level Completed!
+            </h2>
+          </div>
+          <div class="grid grid-cols-2 gap-4 mb-6">
+            <div class="bg-gray-50 p-4 rounded">
+              <div class="text-sm text-gray-500">Level Score</div>
+              <div
+                id="level-modal-score"
+                class="text-xl font-bold text-gray-800"
+              >
+                0
+              </div>
+            </div>
+            <div class="bg-gray-50 p-4 rounded">
+              <div class="text-sm text-gray-500">Typing Speed</div>
+              <div
+                id="level-modal-speed"
+                class="text-xl font-bold text-gray-800"
+              >
+                0 WPM
+              </div>
+            </div>
+            <div class="bg-gray-50 p-4 rounded">
+              <div class="text-sm text-gray-500">Accuracy</div>
+              <div
+                id="level-modal-accuracy"
+                class="text-xl font-bold text-gray-800"
+              >
+                0%
+              </div>
+            </div>
+            <div class="bg-gray-50 p-4 rounded">
+              <div class="text-sm text-gray-500">Time Taken</div>
+              <div
+                id="level-modal-time"
+                class="text-xl font-bold text-gray-800"
+              >
+                0s
+              </div>
+            </div>
+          </div>
+          <div class="flex justify-center">
+            <button
+              id="next-level-button"
+              class="bg-primary text-white py-3 px-6 rounded-button font-medium hover:bg-opacity-90 transition-all"
+            >
+              Next Level
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Leaderboard modal (hidden by default) -->
+    <div
+      id="leaderboard-modal"
+      class="fixed inset-0 flex items-center justify-center z-50 hidden bg-white"
+    >
+      <div class="w-full h-full flex flex-col">
+        <div class="p-6">
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-3xl font-bold text-gray-800">Leaderboard</h2>
+            <button
+              id="close-leaderboard"
+              class="text-gray-400 hover:text-gray-600"
+            >
+              <i class="ri-close-line ri-lg"></i>
+            </button>
+          </div>
+          <!-- Modern Leaderboard Cards -->
+          <div id="leaderboard-cards" class="leaderboard-cards-container"></div>
+          <!-- Modern Leaderboard Table -->
+          <table class="leaderboard-table-modern mt-4">
+            <thead>
+              <tr>
+                <th>Place</th>
+                <th>Avatar</th>
+                <th>Player</th>
+                <th>Stats</th>
+                <th>Rank</th>
+              </tr>
+            </thead>
+            <tbody id="leaderboard-body"></tbody>
+          </table>
+          <div class="mt-6">
+            <button
+              id="back-to-results"
+              class="absolute top-4 right-4 bg-gray-100 text-gray-700 py-2 px-4 rounded-button font-medium hover:bg-gray-200 transition-all whitespace-nowrap"
+            ></button>
+          </div>
+          <div class="mt-6">
+            <button
+              id="play-again-leaderboard"
+              class="absolute top-4 right-4 bg-primary text-white py-2 px-4 rounded-button font-medium hover:bg-opacity-90 transition-all whitespace-nowrap"
+            >
+              Play Again
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Registration Modal (hidden by default) -->
+    <div
+      id="registration-modal"
+      class="fixed inset-0 flex items-center justify-center z-50 hidden"
+    >
+      <div class="modal-overlay absolute inset-0 bg-black bg-opacity-50"></div>
+      <div
+        class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 z-10 transform transition-all"
+      >
+        <div class="p-6">
+          <div class="text-center mb-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">
+              Player Registration
+            </h2>
+            <p class="text-gray-600">
+              Create your profile to track your progress
+            </p>
+          </div>
+          <form id="registration-form" class="space-y-6">
+            <div>
+              <label
+                for="name"
+                class="block text-sm font-medium text-gray-700 mb-1"
+                >Full Name</label
+              >
+              <input
+                type="text"
+                id="name"
+                name="name"
+                required
+                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                placeholder="Enter your full name"
+              />
+            </div>
+            <div>
+              <label
+                for="username"
+                class="block text-sm font-medium text-gray-700 mb-1"
+                >Username</label
+              >
+              <input
+                type="text"
+                id="username"
+                name="username"
+                required
+                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                placeholder="Choose a username"
+              />
+            </div>
+            <div>
+              <label
+                for="email"
+                class="block text-sm font-medium text-gray-700 mb-1"
+                >Email Address</label
+              >
+              <input
+                type="email"
+                id="email"
+                name="email"
+                required
+                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                placeholder="Enter your email address"
+              />
+            </div>
+            <div>
+              <label
+                for="phone"
+                class="block text-sm font-medium text-gray-700 mb-1"
+                >Phone Number</label
+              >
+              <input
+                type="tel"
+                id="phone"
+                name="phone"
+                required
+                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                placeholder="Enter your phone number"
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-3"
+                >Select Avatar</label
+              >
+              <div class="grid grid-cols-5 gap-3" id="avatar-selection">
+                <div class="avatar-option selected" data-avatar="avatar 1.png">
+                  <img
+                    src="avatar 1.png"
+                    alt="Avatar 1"
+                    class="w-12 h-12 rounded-full object-cover border-2 border-transparent hover:border-primary transition-all cursor-pointer"
+                  />
+                </div>
+                <div class="avatar-option" data-avatar="avatar 2.png">
+                  <img
+                    src="avatar 2.png"
+                    alt="Avatar 2"
+                    class="w-12 h-12 rounded-full object-cover border-2 border-transparent hover:border-primary transition-all cursor-pointer"
+                  />
+                </div>
+                <div class="avatar-option" data-avatar="avatar 3.png">
+                  <img
+                    src="avatar 3.png"
+                    alt="Avatar 3"
+                    class="w-12 h-12 rounded-full object-cover border-2 border-transparent hover:border-primary transition-all cursor-pointer"
+                  />
+                </div>
+                <div class="avatar-option" data-avatar="avatar 4.png">
+                  <img
+                    src="avatar 4.png"
+                    alt="Avatar 4"
+                    class="w-12 h-12 rounded-full object-cover border-2 border-transparent hover:border-primary transition-all cursor-pointer"
+                  />
+                </div>
+                <div class="avatar-option" data-avatar="avatar 5.png">
+                  <img
+                    src="avatar 5.png"
+                    alt="Avatar 5"
+                    class="w-12 h-12 rounded-full object-cover border-2 border-transparent hover:border-primary transition-all cursor-pointer"
+                  />
+                </div>
+                <div class="avatar-option" data-avatar="avatar 6.png">
+                  <img
+                    src="avatar 6.png"
+                    alt="Avatar 6"
+                    class="w-12 h-12 rounded-full object-cover border-2 border-transparent hover:border-primary transition-all cursor-pointer"
+                  />
+                </div>
+                <div class="avatar-option" data-avatar="avatar 7.png">
+                  <img
+                    src="avatar 7.png"
+                    alt="Avatar 7"
+                    class="w-12 h-12 rounded-full object-cover border-2 border-transparent hover:border-primary transition-all cursor-pointer"
+                  />
+                </div>
+                <div class="avatar-option" data-avatar="avatar 8.png">
+                  <img
+                    src="avatar 8.png"
+                    alt="Avatar 8"
+                    class="w-12 h-12 rounded-full object-cover border-2 border-transparent hover:border-primary transition-all cursor-pointer"
+                  />
+                </div>
+                <div class="avatar-option" data-avatar="avatar 9.png">
+                  <img
+                    src="avatar 9.png"
+                    alt="Avatar 9"
+                    class="w-12 h-12 rounded-full object-cover border-2 border-transparent hover:border-primary transition-all cursor-pointer"
+                  />
+                </div>
+                <div class="avatar-option" data-avatar="avatar 10.png">
+                  <img
+                    src="avatar 10.png"
+                    alt="Avatar 10"
+                    class="w-12 h-12 rounded-full object-cover border-2 border-transparent hover:border-primary transition-all cursor-pointer"
+                  />
+                </div>
+              </div>
+              <input
+                type="hidden"
+                id="selected-avatar"
+                name="avatar"
+                value="avatar 1.png"
+              />
+            </div>
+            <div class="pt-4">
+              <button
+                type="submit"
+                class="w-full bg-primary text-white py-3 px-4 rounded-button font-medium hover:bg-opacity-90 transition-all"
+              >
+                Register & Continue
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <!-- <script src="ajax.js"></script> -->
+    <script src="script.js"></script>
+  </body>
+</html>

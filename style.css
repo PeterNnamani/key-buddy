@@ -1,0 +1,516 @@
+:where([class^="ri-"])::before {
+  content: "\f3c2";
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #f9fafb;
+}
+
+.text-display-container {
+  margin-top: 0.5rem;
+  /* Very tiny space between navbar and display area */
+  margin-bottom: 48px;
+  /* Space between display and keyboard remains */
+  /* justify-content:  !important; */
+}
+
+.typing-text {
+  height: 250px;
+  /* display: flex; */
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  overflow: hidden;
+  /* prevent scrollbar for animation */
+  position: relative;
+  /* allow absolute children */
+  display: block;
+}
+
+
+.keyboard-container {
+  max-width: 100%;
+  /* Allow the keyboard to take up the full width */
+  padding: 0 20px;
+  /* Add some padding for spacing */
+}
+
+.key {
+  flex: 1 1 auto;
+  /* Allow keys to stretch and take up more space */
+  min-width: 50px;
+  /* Set a minimum width for each key */
+  height: 60px;
+  /* Adjust the height for better proportions */
+  border: 1px solid #ddd;
+  /* Add a border for better visibility */
+  border-radius: 4px;
+  /* Slightly round the corners */
+  background-color: #f9f9f9;
+  /* Light background color */
+  text-align: center;
+  line-height: 60px;
+  /* Center text vertically for 60px height */
+  font-size: 16px;
+  /* Adjust font size */
+  font-weight: bold;
+  color: #333;
+  /* Darker text color */
+  margin: 2px;
+  /* Add spacing between keys */
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+/* Reduce width of backspace button */
+.key[data-key="Backspace"] {
+  min-width: 70px;
+  max-width: 90px;
+  padding-left: 0;
+  padding-right: 0;
+  font-size: 18px;
+}
+
+/* Properly style the number 2 button */
+.key[data-key="Digit2"] {
+  min-width: 50px;
+  max-width: 60px;
+  font-size: 16px;
+  padding: 0;
+}
+
+.key-wide {
+  flex: 2 1 auto;
+  /* Make wider keys take up more space */
+}
+
+.key-space {
+  flex: 5 1 auto;
+  /* Make the spacebar significantly wider */
+}
+
+.key-pressed {
+  background-color: #e9f5ff;
+  transform: translateY(2px);
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
+}
+
+.key-next {
+  background-color: #f0f9ff;
+  border-color: #93c5fd;
+}
+
+.key-wrong {
+  background-color: rgba(231, 76, 60, 0.1);
+  border-color: #E74C3C;
+}
+
+.key-correct {
+  background-color: rgba(46, 204, 113, 0.1);
+  border-color: #2ECC71;
+}
+
+.key-suggest {
+  background-color: #e0f7fa !important;
+  border-color: #00bcd4 !important;
+  color: #00bcd4 !important;
+}
+
+.progress-bar {
+  height: 12px;
+  border-radius: 6px;
+  overflow: hidden;
+  background-color: #e5e7eb;
+}
+
+.progress-fill {
+  height: 100%;
+  transition: width 0.2s ease;
+}
+
+.word {
+  display: inline-block;
+  margin-right: 8px;
+  transition: color 0.2s ease;
+  line-height: 1.5;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+.word.current {
+  border-bottom: 2px solid #3b82f6;
+}
+
+.word.correct {
+  color: #2ECC71;
+}
+
+.word.incorrect {
+  color: #E74C3C;
+}
+
+/* Add styles for per-letter feedback and strikethrough */
+.word span.text-green-600 {
+  color: #2ecc71 !important;
+  font-weight: bold;
+}
+
+.word span.text-red-600 {
+  color: #E74C3C !important;
+  font-weight: bold;
+}
+
+.word[style*="line-through"] {
+  text-decoration-thickness: 3px;
+  text-decoration-style: solid;
+}
+
+.avatar {
+  background-color: #e5e7eb;
+  overflow: hidden;
+}
+
+.modal-overlay {
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.pulse-animation {
+  animation: pulse 1.5s infinite;
+}
+
+/* Reduce the size of game stats */
+#typing-speed,
+#accuracy,
+#score {
+  font-size: 1rem;
+  /* Reduce font size */
+  font-weight: 500;
+  /* Adjust font weight */
+}
+
+.text-sm {
+  font-size: 0.75rem;
+  /* Reduce the size of smaller text */
+}
+
+.flex.gap-8>div {
+  gap: 4px;
+  /* Reduce spacing between stats */
+}
+
+.flex.justify-between.mb-6.px-4 {
+  margin-bottom: 1rem;
+  /* Reduce bottom margin */
+}
+
+/* Adjust text for levels */
+.flex.justify-between.mt-2.text-xs.text-gray-500 span {
+  font-size: 0.8rem;
+  /* Slightly increase font size for readability */
+}
+
+.leaderboard-icon {
+  width: 50px;
+  /* Increase width */
+  height: 50px;
+  /* Increase height */
+  border-radius: 50%;
+  /* Ensure circular shape */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  /* Increase font size for icons */
+  font-weight: bold;
+  color: #fff;
+}
+
+.leaderboard-icon.first {
+  background-color: gold;
+  /* Gold for 1st place */
+}
+
+.leaderboard-icon.second {
+  background-color: silver;
+  /* Silver for 2nd place */
+}
+
+.leaderboard-icon.third {
+  background-color: #cd7f32;
+  /* Bronze for 3rd place */
+}
+
+/* Leaderboard table */
+.leaderboard-table {
+  max-width: 80%;
+  /* Reduce the table width */
+  margin: 0 auto;
+  /* Center the table */
+  border: 1px solid #d1d5db;
+  /* Add a grey outline */
+  border-radius: 8px;
+  /* Add rounded corners */
+  overflow: hidden;
+  /* Ensure content stays within the rounded corners */
+}
+
+.leaderboard-table th,
+.leaderboard-table td {
+  padding: 8px 12px;
+  /* Adjust padding for a more compact table */
+  text-align: center;
+  /* Center-align text */
+}
+
+/* Leaderboard triangle layout */
+#leaderboard-modal .relative {
+  position: relative;
+  height: 150px;
+  /* Adjust height as needed */
+}
+
+#leaderboard-modal .absolute {
+  position: absolute;
+}
+
+#leaderboard-modal .absolute.top-0 {
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+#leaderboard-modal .absolute.bottom-0 {
+  bottom: 0;
+}
+
+/* Level 5 specific styles */
+.word[data-word-index] {
+  font-size: 1.2rem;
+  padding: 6px 12px;
+  border-radius: 6px;
+  background-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
+.word[data-word-index].current {
+  background-color: #e6f7ff;
+  border: 2px solid #3b82f6;
+  font-weight: bold;
+}
+
+.word[data-word-index].correct {
+  background-color: rgba(46, 204, 113, 0.2);
+  color: #2ecc71;
+}
+
+.word[data-word-index].incorrect {
+  background-color: rgba(231, 76, 60, 0.2);
+  color: #e74c3c;
+}
+
+/* Avatar selection styles */
+.avatar-option {
+  cursor: pointer;
+  padding: 2px;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar-option.selected {
+  border-color: #2ecc71;
+  transform: scale(1.1);
+}
+
+.avatar-option img {
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  display: block;
+}
+
+/* Registration form styles */
+#registration-form label {
+  font-weight: 500;
+}
+
+#registration-form input:focus {
+  border-color: #2ecc71;
+}
+
+/* Custom leaderboard card styles */
+.leaderboard-cards-container {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.leaderboard-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+  padding: 1.5rem 2rem;
+  min-width: 260px;
+  text-align: center;
+  position: relative;
+  border: 2px solid #e5e7eb;
+}
+
+.leaderboard-card .avatar-img {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 0 auto 0.5rem auto;
+  border: 2px solid #2ecc71;
+  background: #f3f4f6;
+}
+
+.leaderboard-card .leaderboard-trophy {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  font-size: 1.5rem;
+}
+
+.leaderboard-card .leaderboard-trophy.gold {
+  color: #FFD700;
+}
+
+.leaderboard-card .leaderboard-trophy.silver {
+  color: #C0C0C0;
+}
+
+.leaderboard-card .leaderboard-trophy.bronze {
+  color: #cd7f32;
+}
+
+.leaderboard-card .leaderboard-rank {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #888;
+  margin-bottom: 0.25rem;
+}
+
+.leaderboard-card .leaderboard-name {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 0.25rem;
+}
+
+.leaderboard-card .leaderboard-role {
+  font-size: 1rem;
+  color: #2ecc71;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.leaderboard-card .leaderboard-stats {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+  font-size: 0.95rem;
+  color: #444;
+}
+
+.leaderboard-table-modern {
+  width: 100%;
+  max-width: 80%;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+  overflow: hidden;
+  margin: 0 auto;
+  border: 1px solid #e5e7eb;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.leaderboard-table-modern th,
+.leaderboard-table-modern td {
+  padding: 0.75rem 1rem;
+  text-align: center;
+  font-size: 1rem;
+  border-right: 1px solid #e5e7eb;
+  vertical-align: middle;
+}
+
+.leaderboard-table-modern th:last-child,
+.leaderboard-table-modern td:last-child {
+  border-right: none;
+}
+
+.leaderboard-table-modern th {
+  background: #f3f4f6;
+  color: #888;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.leaderboard-table-modern tr:not(:last-child) {
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.leaderboard-table-modern td {
+  background: #fff;
+}
+
+.leaderboard-table-modern .avatar-img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1.5px solid #2ecc71;
+  background: #f3f4f6;
+  margin: 0 auto;
+}
+
+.leaderboard-table-modern .rank-badge {
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 0.15em 0.7em;
+  background: #e5e7eb;
+  color: #2ecc71;
+  display: inline-block;
+}
+
+.leaderboard-table-modern .rank-badge.gold {
+  background: #fffbe6;
+  color: #FFD700;
+}
+
+.leaderboard-table-modern .rank-badge.silver {
+  background: #f8fafc;
+  color: #C0C0C0;
+}
+
+.leaderboard-table-modern .rank-badge.bronze {
+  background: #fff5e6;
+  color: #cd7f32;
+}
+
+/* media query */
