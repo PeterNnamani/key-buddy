@@ -527,7 +527,9 @@
               <th>Place</th>
               <th>Avatar</th>
               <th>Player</th>
-              <th>Stats</th>
+              <th>Score</th>
+              <th>Speed</th>
+              <th>Time</th>
               <th>Rank</th>
             </tr>
           </thead>
@@ -570,65 +572,53 @@
             <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Username</label>
             <input type="text" id="username" name="username" required
               class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-              placeholder="Choose a username" />
-          </div>
-          <div>
-            <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-            <input type="email" id="email" name="email" required
-              class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-              placeholder="Enter your email address" />
-          </div>
-          <div>
-            <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
-            <input type="tel" id="phone" name="phone" required
-              class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-              placeholder="Enter your phone number" />
+              placeholder="e.g johndoe" />
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-3">Select Avatar</label>
             <div class="grid grid-cols-5 gap-3" id="avatar-selection">
-              <div class="avatar-option selected" data-avatar="avatar 1.png">
-                <img src="assets/avatar/avatar_1.pngg" alt="Avatar 1"
+              <div class="avatar-option selected" data-avatar="avatar_1.png">
+                <img src="assets/avatar/avatar_1.png" alt="Avatar 1"
                   class="w-12 h-12 rounded-full object-cover border-2 border-transparent hover:border-primary transition-all cursor-pointer" />
               </div>
-              <div class="avatar-option" data-avatar="avatar 2.png">
+              <div class="avatar-option" data-avatar="avatar_2.png">
                 <img src="assets/avatar/avatar_2.png" alt="Avatar 2"
                   class="w-12 h-12 rounded-full object-cover border-2 border-transparent hover:border-primary transition-all cursor-pointer" />
               </div>
-              <div class="avatar-option" data-avatar="avatar 3.png">
-                <img src="aassets/avatar/avatar_3.png" alt="Avatar 3"
+              <div class="avatar-option" data-avatar="avatar_3.png">
+                <img src="assets/avatar/avatar_3.png" alt="Avatar 3"
                   class="w-12 h-12 rounded-full object-cover border-2 border-transparent hover:border-primary transition-all cursor-pointer" />
               </div>
-              <div class="avatar-option" data-avatar="avatar 4.png">
+              <div class="avatar-option" data-avatar="avatar_4.png">
                 <img src="assets/avatar/avatar_4.png" alt="Avatar 4"
                   class="w-12 h-12 rounded-full object-cover border-2 border-transparent hover:border-primary transition-all cursor-pointer" />
               </div>
-              <div class="avatar-option" data-avatar="avatar 5.png">
+              <div class="avatar-option" data-avatar="avatar_5.png">
                 <img src="assets/avatar/avatar_5.png" alt="Avatar 5"
                   class="w-12 h-12 rounded-full object-cover border-2 border-transparent hover:border-primary transition-all cursor-pointer" />
               </div>
-              <div class="avatar-option" data-avatar="avatar 6.png">
+              <div class="avatar-option" data-avatar="avatar_6.png">
                 <img src="assets/avatar/avatar_6.png" alt="Avatar 6"
                   class="w-12 h-12 rounded-full object-cover border-2 border-transparent hover:border-primary transition-all cursor-pointer" />
               </div>
-              <div class="avatar-option" data-avatar="avatar 7.png">
+              <div class="avatar-option" data-avatar="avatar_7.png">
                 <img src="assets/avatar/avatar_7.png" alt="Avatar 7"
                   class="w-12 h-12 rounded-full object-cover border-2 border-transparent hover:border-primary transition-all cursor-pointer" />
               </div>
-              <div class="avatar-option" data-avatar="avatar 8.png">
+              <div class="avatar-option" data-avatar="avatar_8.png">
                 <img src="assets/avatar/avatar_8.png" alt="Avatar 8"
                   class="w-12 h-12 rounded-full object-cover border-2 border-transparent hover:border-primary transition-all cursor-pointer" />
               </div>
-              <div class="avatar-option" data-avatar="avatar 9.png">
+              <div class="avatar-option" data-avatar="avatar_9.png">
                 <img src="assets/avatar/avatar_9.png" alt="Avatar 9"
                   class="w-12 h-12 rounded-full object-cover border-2 border-transparent hover:border-primary transition-all cursor-pointer" />
               </div>
-              <div class="avatar-option" data-avatar="avatar 10.png">
+              <div class="avatar-option" data-avatar="avatar_10.png">
                 <img src="assets/avatar/avatar_10.png" alt="Avatar 10"
                   class="w-12 h-12 rounded-full object-cover border-2 border-transparent hover:border-primary transition-all cursor-pointer" />
               </div>
             </div>
-            <input type="hidden" id="selected-avatar" name="avatar" value="avatar 1.png" />
+            <input type="hidden" id="selected-avatar" name="avatar" value="avatar_1.png" />
           </div>
           <div class="pt-4">
             <button type="submit"
@@ -641,7 +631,7 @@
     </div>
   </div>
   <!-- <script src="ajax.js"></script> -->
-  <script src="js/index.js"></script>
+  <script type="module" src="js/index.js"></script>
 </body>
 
 </html>

@@ -1,54 +1,45 @@
-document.addEventListener('DOMContentLoaded', () => {
-  // Check if a user is already registered
-  const existingUser = localStorage.getItem('keybuddyUser');
-  if (existingUser) {
-    alert('You are already registered. Redirecting to the game...');
-    window.location.href = 'KEYBUDDY-Typing-Challenge.html';
-    return;
-  }
+export default function showRegistrationModal({ showCountDown }) {
+  const registrationModal = document.getElementById('registration-modal');
+  const registrationForm = registrationModal.querySelector('#registration-form');
+  const avatarOptions = registrationModal.querySelectorAll('.avatar-option');
+  const selectedAvatarInput = registrationModal.querySelector('#selected-avatar');
+  registrationModal.classList.remove('hidden');
 
-  // Avatar selection functionality
-  const avatarOptions = document.querySelectorAll('.avatar-option');
-  const selectedAvatarInput = document.getElementById('selected-avatar');
-
+  // Avatar selection
   avatarOptions.forEach((option) => {
-    option.addEventListener('click', function () {
-      // Remove selected class from all options
+    option.onclick = function () {
       avatarOptions.forEach((opt) => opt.classList.remove('selected'));
-
-      // Add selected class to clicked option
       this.classList.add('selected');
-
-      // Update hidden input value
       selectedAvatarInput.value = this.dataset.avatar;
-    });
-  });
-
-  // Form submission
-  const registrationForm = document.getElementById('registration-form');
-
-  registrationForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-
-    // Get form data
-    const formData = {
-      name: document.getElementById('name').value,
-      username: document.getElementById('username').value,
-      email: document.getElementById('email').value,
-      phone: document.getElementById('phone').value,
-      avatar: document.getElementById('selected-avatar').value,
-      totalScore: 0, // Initialize total score
-      totalSpeed: 0, // Initialize total speed
-      totalTime: 0, // Initialize total time
     };
-
-    // Save user data to localStorage
-    localStorage.setItem('keybuddyUser', JSON.stringify(formData));
-
-    // Set flag to start from level 4
-    localStorage.setItem('startFromLevel', '4');
-
-    // Redirect to game page and start from level 4
-    window.location.href = 'KEYBUDDY-Typing-Challenge.html';
   });
-});
+
+  // Registration form submit
+  if (!registrationForm.dataset.listenerAttached) {
+    registrationForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const formData = {
+        id: 0,
+        full_name: registrationModal.querySelector('#name').value,
+        username: registrationModal.querySelector('#username').value,
+        avatar: registrationModal.querySelector('#selected-avatar').value,
+        score: 0,
+        speed: 0,
+        time: 0,
+        accuracy: 0,
+        type: 'new',
+      };
+
+      console.log('Form data ', formData);
+      localStorage.setItem('user-data', JSON.stringify(formData));
+      localStorage.setItem('has-registered', 'true');
+      registrationModal.classList.add('hidden');
+
+      // Immediately continue to level 4 after registration
+      //  const currentLevel = 4;
+      showCountDown(4)
+    });
+    registrationForm.dataset.listenerAttached = 'true';
+  }
+}
