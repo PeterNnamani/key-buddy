@@ -4,5 +4,9 @@
   "private": true,
   "scripts": {
     "build": "echo 'no build script'"
+  },
+  "dependencies": {
+    "@tailwindcss/cli": "^4.1.7",
+    "tailwindcss": "^4.1.7"
   }
 }
