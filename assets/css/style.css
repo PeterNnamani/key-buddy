@@ -61,9 +61,7 @@ body, html {
   /* justify-content:  !important; */
 }
 
-#start-game{
-  color: #2ecc71;
-}
+
 .typing-text {
   height: 150px;
   /* display: flex; */
@@ -403,3 +401,27 @@ body, html {
   transform: scale(0.93);
   transition: transform 0.2s;
 }
+
+/* ...existing code... */
+
+/* Reduce font size for all modals */
+/*  */
+
+#completion-modal .text-2xl,
+#level-completion-modal .text-2xl,
+#registration-modal .text-2xl {
+  font-size: 1.15rem !important;
+}
+
+#completion-modal .text-xl,
+#level-completion-modal .text-xl {
+  font-size: 1rem !important;
+}
+
+#completion-modal .p-6,
+#level-completion-modal .p-6,
+#registration-modal .p-6 {
+  padding: 1rem !important;
+}
+
+/* ...existing code... */
