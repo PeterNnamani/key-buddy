@@ -11,9 +11,9 @@ html, body {
 body {
   font-family: 'Poppins', sans-serif;
   background-color: #f9fafb;
-  font-size: 1.18rem; /* Even larger base font */
+  font-size: 14px; /* Even larger base font */
   transform: scale(1); /* No scale, use natural size */
-  transform-origin: top center;
+  transform-origin: center;
 }
 
 /* Responsive font size and scaling for body to fit all devices without overflow */
@@ -61,8 +61,11 @@ body, html {
   /* justify-content:  !important; */
 }
 
+#start-game{
+  color: #2ecc71;
+}
 .typing-text {
-  height: 200px;
+  height: 150px;
   /* display: flex; */
   flex-direction: column;
   align-items: center;
@@ -73,7 +76,7 @@ body, html {
   position: relative;
   /* allow absolute children */
   display: block;
-  font-size: 1.35rem; /* Even larger */
+  font-size: 12px; /* Even larger */
 }
 
 
@@ -87,9 +90,9 @@ body, html {
 .key {
   flex: 1 1 auto;
   /* Allow keys to stretch and take up more space */
-  min-width: 36px;
+
   /* Set a minimum width for each key */
-  height: 45px;
+  height: 40px;
   /* Adjust the height for better proportions */
   border: 1px solid #ddd;
   /* Add a border for better visibility */
@@ -112,24 +115,10 @@ body, html {
 }
 
 /* Reduce width of backspace button */
-.key[data-key="Backspace"] {
-  min-width: 48px;
-  max-width: 60px;
-  font-size: 22px; /* Even larger */
-}
+
 
 /* Properly style the number 2 button */
-.key[data-key="Digit2"] {
-  min-width: 36px;
-  max-width: 40px;
-  font-size: 21px; /* Even larger */
-  padding: 0;
-}
 
-.key-wide {
-  flex: 1.5 1 auto;
-  /* Make wider keys take up more space */
-}
 
 .key-space {
   flex: 3 1 auto;
@@ -176,7 +165,7 @@ body, html {
 }
 
 .word {
-  font-size: 1.28rem; /* Even larger */
+  font-size: 14px; /* Even larger */
   display: inline-block;
   margin-right: 4px;
   transition: color 0.2s ease;
