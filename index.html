@@ -13,7 +13,7 @@
           colors: { primary: '#2ECC71', secondary: '#E74C3C' },
           borderRadius: {
             none: '0px',
-            sm: '3px',
+            sm: '4px',
             DEFAULT: '8px',
             md: '12px',
             lg: '16px',
@@ -412,123 +412,6 @@
       </div>
     </div>
   </main>
-
-  <!-- Intro page-->
-  <div id="intro-page" class="fixed inset-0 bg-white z-50 flex items-center justify-center">
-    <div class="max-w-3xl w-full px-6">
-      <div class="text-center mb-12">
-        <h1 class="font-['Pacifico'] text-5xl text-gray-800 mb-4">
-          KEYBUDDY
-        </h1>
-        <p class="text-gray-600 text-lg">
-          Master your typing skills through 5 exciting levels
-        </p>
-      </div>
-      <div class="bg-white rounded-xl shadow-lg p-8 mb-8">
-        <div class="grid md:grid-cols-2 gap-8">
-          <div>
-            <h2 class="text-2xl font-bold text-gray-800 mb-6">How to Play</h2>
-            <ul class="space-y-4">
-              <li class="flex items-start">
-                <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-1">
-                  <i class="ri-keyboard-line text-blue-600"></i>
-                </div>
-                <div class="ml-4">
-                  <h3 class="font-medium text-gray-800">Type the Words</h3>
-                  <p class="text-gray-600">
-                    Type each word correctly and press space to continue
-                  </p>
-                </div>
-              </li>
-              <li class="flex items-start">
-                <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-1">
-                  <i class="ri-timer-line text-green-600"></i>
-                </div>
-                <div class="ml-4">
-                  <h3 class="font-medium text-gray-800">Beat the Clock</h3>
-                  <p class="text-gray-600">
-                    Complete each level within the time limit
-                  </p>
-                </div>
-              </li>
-              <li class="flex items-start">
-                <div class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0 mt-1">
-                  <i class="ri-speed-up-line text-purple-600"></i>
-                </div>
-                <div class="ml-4">
-                  <h3 class="font-medium text-gray-800">
-                    Progress Through Levels
-                  </h3>
-                  <p class="text-gray-600">
-                    Each level increases in difficulty and complexity
-                  </p>
-                </div>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h2 class="text-2xl font-bold text-gray-800 mb-6">
-              Level Overview
-            </h2>
-            <div class="space-y-4">
-              <div class="bg-gray-50 p-4 rounded-lg">
-                <div class="flex items-center justify-between mb-2">
-                  <span class="font-medium text-gray-800">Level 1</span>
-                  <span class="text-sm text-gray-500">60 seconds</span>
-                </div>
-                <div class="h-2 bg-gray-200 rounded-full">
-                  <div class="h-full w-1/5 bg-blue-500 rounded-full"></div>
-                </div>
-              </div>
-              <div class="bg-gray-50 p-4 rounded-lg">
-                <div class="flex items-center justify-between mb-2">
-                  <span class="font-medium text-gray-800">Level 2</span>
-                  <span class="text-sm text-gray-500">55 seconds</span>
-                </div>
-                <div class="h-2 bg-gray-200 rounded-full">
-                  <div class="h-full w-2/5 bg-blue-500 rounded-full"></div>
-                </div>
-              </div>
-              <div class="bg-gray-50 p-4 rounded-lg">
-                <div class="flex items-center justify-between mb-2">
-                  <span class="font-medium text-gray-800">Level 3</span>
-                  <span class="text-sm text-gray-500">50 seconds</span>
-                </div>
-                <div class="h-2 bg-gray-200 rounded-full">
-                  <div class="h-full w-3/5 bg-blue-500 rounded-full"></div>
-                </div>
-              </div>
-              <div class="bg-gray-50 p-4 rounded-lg">
-                <div class="flex items-center justify-between mb-2">
-                  <span class="font-medium text-gray-800">Level 4</span>
-                  <span class="text-sm text-gray-500">45 seconds</span>
-                </div>
-                <div class="h-2 bg-gray-200 rounded-full">
-                  <div class="h-full w-4/5 bg-blue-500 rounded-full"></div>
-                </div>
-              </div>
-              <div class="bg-gray-50 p-4 rounded-lg">
-                <div class="flex items-center justify-between mb-2">
-                  <span class="font-medium text-gray-800">Level 5</span>
-                  <span class="text-sm text-gray-500">40 seconds</span>
-                </div>
-                <div class="h-2 bg-gray-200 rounded-full">
-                  <div class="h-full w-full bg-blue-500 rounded-full"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="text-center">
-        <button id="start-game"
-          class="bg-primary text-white text-lg py-4 px-12 rounded-button font-medium hover:bg-opacity-90 transition-all whitespace-nowrap inline-flex items-center gap-2">
-          Start Game
-          <i class="ri-arrow-right-line"></i>
-        </button>
-      </div>
-    </div>
-  </div>
   <!-- Game completion modal (hidden by default) -->
   <div id="completion-modal" class="fixed inset-0 flex items-center justify-center z-50 hidden">
     <div class="modal-overlay absolute inset-0"></div>
