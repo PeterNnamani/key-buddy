@@ -1,8 +1,6 @@
 /* Ensure full viewport height and width */
 html, body {
   min-height: 100vh;
-  height: 100vh;
-  width: 100vw;
   max-width: 100vw;
   overflow-x: hidden;
   font-family: "poppins";
@@ -53,6 +51,10 @@ body, html {
   overflow-x: hidden !important;
 }
 
+main{
+  height: 100%;
+  width: 100%;
+}
 .text-display-container {
   margin-top: 0.25rem;
   /* Very tiny space between navbar and display area */
