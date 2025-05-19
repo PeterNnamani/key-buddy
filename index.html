@@ -37,12 +37,10 @@
   <link rel="stylesheet" href="assets/css/style.css" />
 </head>
 
-<body>
-  <div id="intro-page" class="fixed inset-0 bg-white z-50 flex items-center justify-center ">
+<body class="min-h-screen flex flex-col">
+  <div id="intro-page" class="fixed inset-0 bg-white z-50 flex items-center justify-center">
     <div class="max-w-3xl w-full px-6">
-    
-      <div class="bg-white rounded-xl shadow-lg p-8 mb-8">
-          <div class="text-center mb-12">
+      <div class="text-center mb-12">
         <h1 class="font-['Pacifico'] text-5xl text-gray-800 mb-4">
           KEYBUDDY
         </h1>
@@ -50,6 +48,7 @@
           Master your typing skills through 5 exciting levels
         </p>
       </div>
+      <div class="bg-white rounded-xl shadow-lg p-8 mb-8">
         <div class="grid md:grid-cols-2 gap-8">
           <div>
             <h2 class="text-2xl font-bold text-gray-800 mb-6">How to Play</h2>
@@ -90,16 +89,6 @@
                 </div>
               </li>
             </ul>
-            <br>
-            <br>
-            <br>
-             <div class="text-center">
-        <button id="start-game"
-          class="bg-primary text-white text-lg py-4 px-12 rounded-button font-medium hover:bg-opacity-90 transition-all whitespace-nowrap inline-flex items-center gap-2">
-          Start Game
-          <i class="ri-arrow-right-line"></i>
-        </button>
-      </div>
           </div>
           <div>
             <h2 class="text-2xl font-bold text-gray-800 mb-6">
@@ -155,7 +144,13 @@
           </div>
         </div>
       </div>
-     
+      <div class="text-center">
+        <button id="start-game"
+          class="bg-primary text-white text-lg py-4 px-12 rounded-button font-medium hover:bg-opacity-90 transition-all whitespace-nowrap inline-flex items-center gap-2">
+          Start Game
+          <i class="ri-arrow-right-line"></i>
+        </button>
+      </div>
     </div>
   </div>
   <header class="bg-white shadow-sm py-4">
@@ -290,7 +285,6 @@
       </div>
     </div>
   </main>
-
   <!-- Game completion modal (hidden by default) -->
   <div id="completion-modal" class="fixed inset-0 flex items-center justify-center z-50 hidden">
     <div class="modal-overlay absolute inset-0"></div>
@@ -346,7 +340,6 @@
       </div>
     </div>
   </div>
-
   <!-- Level Completion Modal -->
   <div id="level-completion-modal" class="fixed inset-0 flex items-center justify-center z-50 hidden">
     <div class="modal-overlay absolute inset-0 bg-black bg-opacity-50"></div>
