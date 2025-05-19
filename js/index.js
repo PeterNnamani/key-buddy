@@ -1,8 +1,8 @@
-import levels from "./level.js";
-import showCountdownAnimation from "./util.js";
-import { saveUserData } from "./util.js";
-import showRegistrationModal from "./registration.js";
-import showLeaderboard from "./leaderboard.js";
+import levels from './level.js';
+import showCountdownAnimation from './util.js';
+import { saveUserData } from './util.js';
+import showRegistrationModal from './registration.js';
+import showLeaderboard from './leaderboard.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   // Game elements
@@ -352,8 +352,9 @@ document.addEventListener('DOMContentLoaded', () => {
           const level2DelayBetweenWords = scrollDuration;
 
           setTimeout(() => {
-            wordElement.style.transition = `bottom ${scrollDuration / 2000
-              }s linear`;
+            wordElement.style.transition = `bottom ${
+              scrollDuration / 2000
+            }s linear`;
             wordElement.style.bottom = '100%';
           }, index * level2DelayBetweenWords);
 
@@ -738,7 +739,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 1000);
   }
 
-
   // End the current level
   function endLevel() {
     clearInterval(timer);
@@ -794,7 +794,7 @@ document.addEventListener('DOMContentLoaded', () => {
               showCountdownAnimation(() => {
                 loadLevel(level);
               });
-            }
+            },
           });
           // Hide the level completion modal while registration is shown
           levelCompletionModal.classList.add('hidden');
@@ -896,7 +896,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     userData.score = score > userData.score ? score : userData.score;
     userData.speed = speed > userData.speed ? speed : userData.speed;
-    userData.accuracy = accuracy > userData.accuracy ? accuracy : userData.accuracy;
+    userData.accuracy =
+      accuracy > userData.accuracy ? accuracy : userData.accuracy;
     userData.time = time > userData.time ? time : userData.time;
 
     console.log('Updated user data:', userData);
@@ -910,14 +911,16 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('Sending to API:', payload);
 
     try {
-      const response = await fetch('https://linkskool.net/api/v1/keybuddy.php',
+      const response = await fetch(
+        'https://linkskool.net/api/v1/keybuddy.php',
         {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(payload),
-        });
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -927,7 +930,9 @@ document.addEventListener('DOMContentLoaded', () => {
       console.log('API response:', result);
 
       if (result.status) {
-        const matchingUser = result.response.find(user => user.username === payload.username);
+        const matchingUser = result.response.find(
+          (user) => user.username === payload.username
+        );
 
         if (matchingUser) {
           payload.id = matchingUser.id;
@@ -939,13 +944,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         //showLeaderboard(result.response);
-        viewLeaderboardButton.addEventListener('click', showLeaderboard(result.response));
+        viewLeaderboardButton.addEventListener(
+          'click',
+          showLeaderboard(result.response)
+        );
       }
     } catch (error) {
       console.error('API error:', error);
     }
   }
-
 
   // Helper to get or generate a unique device id
   function getDeviceId() {
@@ -1170,7 +1177,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Initialize the current typed word
   let currentTypedWord = '';
-
 
   // Play again button
   playAgainButton.addEventListener('click', () => {
