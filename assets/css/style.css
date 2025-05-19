@@ -2,21 +2,34 @@
   content: "\f3c2";
 }
 
+/* Ensure full viewport height and width */
+html, body {
+  min-height: 100vh;
+  height: 100vh;
+  width: 100vw;
+  max-width: 100vw;
+  overflow-x: hidden;
+  font-family: poppins, sans-serif;
+}
+
 body {
   font-family: 'Poppins', sans-serif;
   background-color: #f9fafb;
+  font-size: 1.18rem; /* Even larger base font */
+  transform: scale(1); /* No scale, use natural size */
+  transform-origin: top center;
 }
 
 .text-display-container {
-  margin-top: 0.5rem;
+  margin-top: 0.25rem;
   /* Very tiny space between navbar and display area */
-  margin-bottom: 48px;
+  margin-bottom: 32px;
   /* Space between display and keyboard remains */
   /* justify-content:  !important; */
 }
 
 .typing-text {
-  height: 250px;
+  height: 200px;
   /* display: flex; */
   flex-direction: column;
   align-items: center;
@@ -27,67 +40,66 @@ body {
   position: relative;
   /* allow absolute children */
   display: block;
+  font-size: 1.35rem; /* Even larger */
 }
 
 
 .keyboard-container {
   max-width: 100%;
   /* Allow the keyboard to take up the full width */
-  padding: 0 20px;
+  padding: 0 8px;
   /* Add some padding for spacing */
 }
 
 .key {
   flex: 1 1 auto;
   /* Allow keys to stretch and take up more space */
-  min-width: 50px;
+  min-width: 36px;
   /* Set a minimum width for each key */
-  height: 60px;
+  height: 38px;
   /* Adjust the height for better proportions */
   border: 1px solid #ddd;
   /* Add a border for better visibility */
-  border-radius: 4px;
+  border-radius: 3px;
   /* Slightly round the corners */
   background-color: #f9f9f9;
   /* Light background color */
   text-align: center;
-  line-height: 60px;
-  /* Center text vertically for 60px height */
-  font-size: 16px;
-  /* Adjust font size */
-  font-weight: bold;
+  line-height: 38px;
+  /* Center text vertically for 38px height */
+  font-size: 14px; /* Even larger */
+
   color: #333;
   /* Darker text color */
-  margin: 2px;
+  margin: 1px;
   /* Add spacing between keys */
   transition: all 0.15s ease;
   user-select: none;
+  padding: 0 2px;
 }
 
 /* Reduce width of backspace button */
 .key[data-key="Backspace"] {
-  min-width: 70px;
-  max-width: 90px;
-  padding-left: 0;
-  padding-right: 0;
-  font-size: 18px;
+  min-width: 48px;
+  max-width: 60px;
+  font-size: 22px; /* Even larger */
 }
 
 /* Properly style the number 2 button */
 .key[data-key="Digit2"] {
-  min-width: 50px;
-  max-width: 60px;
-  font-size: 16px;
+  min-width: 36px;
+  max-width: 40px;
+  font-size: 21px; /* Even larger */
   padding: 0;
 }
 
 .key-wide {
-  flex: 2 1 auto;
+  flex: 1.5 1 auto;
   /* Make wider keys take up more space */
 }
 
 .key-space {
-  flex: 5 1 auto;
+  flex: 3 1 auto;
   /* Make the spacebar significantly wider */
 }
 
@@ -119,8 +131,8 @@ body {
 }
 
 .progress-bar {
-  height: 12px;
-  border-radius: 6px;
+  height: 8px;
+  border-radius: 4px;
   overflow: hidden;
   background-color: #e5e7eb;
 }
@@ -131,12 +143,13 @@ body {
 }
 
 .word {
+  font-size: 1.28rem; /* Even larger */
   display: inline-block;
-  margin-right: 8px;
+  margin-right: 4px;
   transition: color 0.2s ease;
   line-height: 1.5;
-  padding: 4px 8px;
-  border-radius: 4px;
+  padding: 2px 5px;
+  border-radius: 3px;
   background-color: rgba(255, 255, 255, 0.8);
 }
 
@@ -198,14 +211,14 @@ body {
 #typing-speed,
 #accuracy,
 #score {
-  font-size: 1rem;
+  font-size: 1.35rem; /* Even larger */
   /* Reduce font size */
   font-weight: 500;
   /* Adjust font weight */
 }
 
 .text-sm {
-  font-size: 0.75rem;
+  font-size: 1.18rem; /* Even larger */
   /* Reduce the size of smaller text */
 }
 
@@ -226,16 +239,16 @@ body {
 }
 
 .leaderboard-icon {
-  width: 50px;
+  width: 32px;
   /* Increase width */
-  height: 50px;
+  height: 32px;
   /* Increase height */
   border-radius: 50%;
   /* Ensure circular shape */
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
+  font-size: 1rem;
   /* Increase font size for icons */
   font-weight: bold;
   color: #fff;
@@ -258,7 +271,7 @@ body {
 
 /* Leaderboard table */
 .leaderboard-table {
-  max-width: 80%;
+  max-width: 98%;
   /* Reduce the table width */
   margin: 0 auto;
   /* Center the table */
@@ -271,174 +284,19 @@ body {
 }
 
 .leaderboard-table th,
-.leaderboard-table td {
-  padding: 8px 12px;
+.leaderboard-table td,
+.leaderboard-table-modern th,
+.leaderboard-table-modern td {
+  padding: 4px 6px;
   /* Adjust padding for a more compact table */
   text-align: center;
   /* Center-align text */
-}
-
-/* Leaderboard triangle layout */
-#leaderboard-modal .relative {
-  position: relative;
-  height: 150px;
-  /* Adjust height as needed */
-}
-
-#leaderboard-modal .absolute {
-  position: absolute;
-}
-
-#leaderboard-modal .absolute.top-0 {
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-#leaderboard-modal .absolute.bottom-0 {
-  bottom: 0;
-}
-
-/* Level 5 specific styles */
-.word[data-word-index] {
-  font-size: 1.2rem;
-  padding: 6px 12px;
-  border-radius: 6px;
-  background-color: rgba(255, 255, 255, 0.9);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  z-index: 10;
-}
-
-.word[data-word-index].current {
-  background-color: #e6f7ff;
-  border: 2px solid #3b82f6;
-  font-weight: bold;
-}
-
-.word[data-word-index].correct {
-  background-color: rgba(46, 204, 113, 0.2);
-  color: #2ecc71;
-}
-
-.word[data-word-index].incorrect {
-  background-color: rgba(231, 76, 60, 0.2);
-  color: #e74c3c;
-}
-
-/* Avatar selection styles */
-.avatar-option {
-  cursor: pointer;
-  padding: 2px;
-  border-radius: 50%;
-  transition: all 0.2s ease;
-  border: 2px solid transparent;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.avatar-option.selected {
-  border-color: #2ecc71;
-  transform: scale(1.1);
-}
-
-.avatar-option img {
-  border-radius: 50%;
-  width: 48px;
-  height: 48px;
-  object-fit: cover;
-  display: block;
-}
-
-/* Registration form styles */
-#registration-form label {
-  font-weight: 500;
-}
-
-#registration-form input:focus {
-  border-color: #2ecc71;
-}
-
-/* Custom leaderboard card styles */
-.leaderboard-cards-container {
-  display: flex;
-  gap: 2rem;
-  justify-content: center;
-  margin-bottom: 2rem;
-}
-
-.leaderboard-card {
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
-  padding: 1.5rem 2rem;
-  min-width: 260px;
-  text-align: center;
-  position: relative;
-  border: 2px solid #e5e7eb;
-}
-
-.leaderboard-card .avatar-img {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin: 0 auto 0.5rem auto;
-  border: 2px solid #2ecc71;
-  background: #f3f4f6;
-}
-
-.leaderboard-card .leaderboard-trophy {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  font-size: 1.5rem;
-}
-
-.leaderboard-card .leaderboard-trophy.gold {
-  color: #FFD700;
-}
-
-.leaderboard-card .leaderboard-trophy.silver {
-  color: #C0C0C0;
-}
-
-.leaderboard-card .leaderboard-trophy.bronze {
-  color: #cd7f32;
-}
-
-.leaderboard-card .leaderboard-rank {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #888;
-  margin-bottom: 0.25rem;
-}
-
-.leaderboard-card .leaderboard-name {
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: #222;
-  margin-bottom: 0.25rem;
-}
-
-.leaderboard-card .leaderboard-role {
-  font-size: 1rem;
-  color: #2ecc71;
-  font-weight: 500;
-  margin-bottom: 0.5rem;
-}
-
-.leaderboard-card .leaderboard-stats {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 1rem;
-  font-size: 0.95rem;
-  color: #444;
+  font-size: 1.25rem; /* Even larger */
 }
 
 .leaderboard-table-modern {
   width: 100%;
-  max-width: 80%;
+  max-width: 98%;
   background: #fff;
   border-radius: 12px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
@@ -453,7 +311,7 @@ body {
 .leaderboard-table-modern td {
   padding: 0.75rem 1rem;
   text-align: center;
-  font-size: 1rem;
+  font-size: 0.85rem;
   border-right: 1px solid #e5e7eb;
   vertical-align: middle;
 }
@@ -514,3 +372,12 @@ body {
 }
 
 /* media query */
+
+/* Reduce the size of the intro-page container */
+#intro-page .max-w-3xl {
+  max-width: 750px !important;
+  padding-left: 0.5rem !important;
+  padding-right: 0.5rem !important;
+  transform: scale(0.93);
+  transition: transform 0.2s;
+}
