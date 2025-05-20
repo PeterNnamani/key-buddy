@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leaderboard</title>
+</head>
+<body>
+   <div id="leaderboard-modal" class="fixed inset-0 flex items-center justify-center z-50 hidden bg-white">
+    <div class="w-full h-full flex flex-col">
+      <div class="p-6">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-3xl font-bold text-gray-800">Leaderboard</h2>
+          <button id="close-leaderboard" class="text-gray-400 hover:text-gray-600">
+            <i class="ri-close-line ri-lg"></i>
+          </button>
+        </div>
+        <!-- Modern Leaderboard Cards -->
+        <div id="leaderboard-cards" class="leaderboard-cards-container"></div>
+        <!-- Modern Leaderboard Table -->
+        <table class="leaderboard-table-modern mt-4">
+          <thead>
+            <tr>
+              <th>Place</th>
+              <th>Avatar</th>
+              <th>Player</th>
+              <th>Score</th>
+              <th>Speed</th>
+              <th>Time</th>
+              <th>Rank</th>
+            </tr>
+          </thead>
+          <tbody id="leaderboard-body"></tbody>
+        </table>
+        <div class="mt-6">
+          <button id="back-to-results"
+            class="absolute top-4 right-4 bg-gray-100 text-gray-700 py-2 px-4 rounded-button font-medium hover:bg-gray-200 transition-all whitespace-nowrap"></button>
+        </div>
+        <div class="mt-6">
+          <button id="play-again-leaderboard"
+            class="absolute top-4 right-4 bg-primary text-white py-2 px-4 rounded-button font-medium hover:bg-opacity-90 transition-all whitespace-nowrap">
+            Play Again
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="./js/index.js"></script>
+  <script src="./js/leaderboard.js"></script>
+</body>
+</html>

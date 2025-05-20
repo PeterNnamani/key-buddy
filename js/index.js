@@ -151,7 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (index >= words.length) {
           // Clean up handler when level ends
           document.removeEventListener('keydown', level2KeydownHandler);
-          attachGlobalKeydownHandler();
+       
           endLevel();
           return;
         }
@@ -224,9 +224,12 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (e.key === 'Backspace') {
           currentTypedWord = currentTypedWord.slice(0, -1);
           renderCurrentWordWithInput();
-        } else if (e.key.length === 1) {
-          currentTypedWord += e.key;
-          renderCurrentWordWithInput();
+        } else if (e.key.length === 1 && e.key.match(/^[a-zA-Z0-9.,;:'\[\]\\\-=`~!@#$%^&*()_+/?<>|]/)) {
+          // Only add one character at a time
+          if (currentTypedWord.length < words[currentWordIndex].length + 10) {
+            currentTypedWord += e.key;
+            renderCurrentWordWithInput();
+          }
         }
       };
       document.addEventListener('keydown', level2KeydownHandler);
@@ -347,7 +350,7 @@ document.addEventListener('DOMContentLoaded', () => {
           wordElement.style.position = 'absolute';
           wordElement.style.left = '50%';
           wordElement.style.transform = 'translateX(-50%)';
-          wordElement.style.bottom = '-50px'; // start below
+          wordElement.style.bottom = '-2px'; // start below
           const scrollDuration = 4000;
           const level2DelayBetweenWords = scrollDuration;
 
@@ -401,7 +404,7 @@ document.addEventListener('DOMContentLoaded', () => {
               wordSpan.classList.add('word', 'current');
               wordSpan.style.position = 'absolute';
               wordSpan.style.right = '-100%';
-              wordSpan.style.top = '50%';
+              wordSpan.style.top = '30%';
               wordSpan.style.transform = 'translateY(-50%)';
               wordSpan.style.transition = 'right 0s';
 
@@ -487,7 +490,7 @@ document.addEventListener('DOMContentLoaded', () => {
           // Words appear one by one, stay for 10 seconds, then disappear
           wordElement.style.position = 'absolute';
           wordElement.style.left = '50%'; // Center horizontally
-          wordElement.style.top = '50%'; // Center vertically
+          wordElement.style.top = '30%'; // Center vertically
           wordElement.style.transform = 'translate(-50%, -50%)'; // Adjust for both horizontal and vertical centering
           wordElement.style.opacity = '0'; // Initially hidden
           wordElement.style.transition = 'opacity 0.5s ease-in-out';
@@ -1065,6 +1068,69 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  // Add a suggestion display area above the keyboard
+  const suggestionDisplay = document.createElement('div');
+  suggestionDisplay.id = 'suggestion-display';
+  suggestionDisplay.style.textAlign = 'center';
+  suggestionDisplay.style.fontSize = '1.5rem';
+  suggestionDisplay.style.margin = '16px 0';
+  const keyboardContainer = document.querySelector('.keyboard-container') || document.body;
+  keyboardContainer.parentNode.insertBefore(suggestionDisplay, keyboardContainer);
+
+  // Show the current suggested word
+  function showWordSuggestion() {
+    if (currentWordIndex < words.length) {
+      suggestionDisplay.textContent = `Suggestion: ${words[currentWordIndex]}`;
+    } else {
+      suggestionDisplay.textContent = '';
+    }
+  }
+
+  // Update the suggestion when moving to the next word
+  function handleWordSuggestionInput(e) {
+    if (!gameActive) return;
+    if (e.key === ' ') {
+      e.preventDefault();
+      const typedWord = currentTypedWord.trim().toLowerCase();
+      const currentWord = words[currentWordIndex];
+      if (typedWord === '') return;
+      if (typedWord === currentWord) {
+        updateWordStatus(currentWordIndex, 'correct');
+        correctWords++;
+        totalCorrectChars += currentWord.length;
+      } else {
+        updateWordStatus(currentWordIndex, 'incorrect');
+        incorrectWords++;
+      }
+      totalTypedChars += typedWord.length;
+      currentWordIndex++;
+      currentTypedWord = '';
+      updateStats();
+      showWordSuggestion();
+      if (currentWordIndex >= words.length) {
+        endLevel();
+      } else {
+        renderCurrentWordWithInput();
+      }
+    } else if (e.key === 'Backspace') {
+      currentTypedWord = currentTypedWord.slice(0, -1);
+      renderCurrentWordWithInput();
+    } else if (e.key.length === 1) {
+      currentTypedWord += e.key;
+      renderCurrentWordWithInput();
+    }
+  }
+
+  // Remove previous keydown listeners and add the new one for suggestions
+  function attachSuggestionKeydownHandler() {
+    document.removeEventListener('keydown', handleWordSuggestionInput);
+    document.addEventListener('keydown', handleWordSuggestionInput);
+  }
+
+  // Call these when starting the game or a new level
+  // showWordSuggestion();
+  // attachSuggestionKeydownHandler();
+
   // --- Place these at the top-level scope ---
   let globalKeydownHandler;
   let level2KeydownHandler;
@@ -1213,6 +1279,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const startGameBtn = document.getElementById('start-game');
   if (startGameBtn) {
     startGameBtn.addEventListener('click', () => {
+      document.getElementById('intro-page').classList.add('hidden');
       showCountdownAnimation(() => {
         initGame();
       });
