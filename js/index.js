@@ -2,7 +2,7 @@ import levels from './level.js';
 import showCountdownAnimation from './util.js';
 import { saveUserData } from './util.js';
 import showRegistrationModal from './registration.js';
-import showLeaderboard from './leaderboard.js';
+import makeRequest from './request.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   // Game elements
@@ -44,21 +44,22 @@ document.addEventListener('DOMContentLoaded', () => {
   let totalTime = 0;
   let totalCorrectChars = 0;
   let totalTypedChars = 0;
- // let averageWPM = 0;
+  let averageWPM = 0;
 
-  // Check if user is registered
-  let alreadyRegistered = localStorage.getItem('has-registered') === 'true';
 
-  // Show leaderboard on load if user is registered
-  const leaderboardData = JSON.parse(localStorage.getItem('keybuddyLeaderboard')) || [];
-  if (localStorage.getItem('has-registered') === 'true') {
-    // Show leaderboard first
-    showLeaderboard(leaderboardData);
-    document.getElementById('intro-page').classList.add('hidden');
-  } else {
-    // Show intro page for new users
-    document.getElementById('intro-page').classList.remove('hidden');
+  const alreadyRegistered = () => {
+    return localStorage.getItem('has-registered') === 'true';
   }
+
+  // // Show leaderboard on load if user is registered
+  // if (alreadyRegistered) {
+  //   // Show leaderboard first
+  //   location.hash = '';
+  //   document.getElementById('intro-page').classList.add('hidden');
+  // } else {
+  //   // Show intro page for new users
+  //   document.getElementById('intro-page').classList.remove('hidden');
+  // }
 
   // Initialize the game
   function initGame() {
@@ -158,7 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
       window._levelTimeouts.forEach(clearTimeout);
     }
     window._levelTimeouts = [];
-    document.removeEventListener('keydown', window._levelKeydownHandler || (() => {}));
+    document.removeEventListener('keydown', window._levelKeydownHandler || (() => { }));
     window._levelKeydownHandler = null;
     // Only attach global handler for level 1
     if (window._globalKeydownHandler) {
@@ -511,7 +512,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // After all per-level modes (after level 5 block), re-attach the global handler for static/fallback modes
-    if (![2,3,4,5].includes(currentLevel)) {
+    if (![2, 3, 4, 5].includes(currentLevel)) {
       if (window._globalKeydownHandler) {
         document.removeEventListener('keydown', window._globalKeydownHandler);
       }
@@ -648,7 +649,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const nextLevelButton = document.getElementById('next-level-button');
       if (currentLevel === 3) {
-        if (alreadyRegistered) {
+        if (alreadyRegistered()) {
           nextLevelButton.textContent = 'Next Level';
           nextLevelButton.onclick = () => {
             levelCompletionModal.classList.add('hidden');
@@ -659,6 +660,8 @@ document.addEventListener('DOMContentLoaded', () => {
           };
         } else {
           showRegistrationModal({
+            saveUserData,
+            makeRequest,
             showCountDown: function (level) {
               currentLevel = level;
               showCountdownAnimation(() => {
@@ -747,54 +750,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Save user data to local storage
     saveUserData(userData);
     // Save user data to the server
-    makeRequest(userData);
-  }
-
-  async function makeRequest(payload) {
-    console.log('Sending to API:', payload);
-
-    try {
-      const response = await fetch(
-        'https://linkskool.net/api/v1/keybuddy.php',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(payload),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const result = await response.json();
-      console.log('API response:', result);
-
-      if (result.status) {
-        const matchingUser = result.response.find(
-          (user) => user.username === payload.username
-        );
-
-        if (matchingUser) {
-          payload.id = matchingUser.id;
-          payload.type = 'update';
-          saveUserData(payload);
-          console.log(`Updated payload with ID:`, payload);
-        } else {
-          console.warn('Username not found in response. ID not updated.');
-        }
-
-        //showLeaderboard(result.response);
-        viewLeaderboardButton.addEventListener(
-          'click',
-          showLeaderboard(result.response)
-        );
-      }
-    } catch (error) {
-      console.error('API error:', error);
-    }
+    makeRequest({ payload: userData, onSuccess: (data) => console.log('data', data) });
   }
 
   // Reset keyboard
@@ -1007,6 +963,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Start game button
   const startGameBtn = document.getElementById('start-game');
+  
   if (startGameBtn) {
     startGameBtn.addEventListener('click', () => {
       document.getElementById('intro-page').classList.add('hidden');
@@ -1014,13 +971,6 @@ document.addEventListener('DOMContentLoaded', () => {
         initGame();
       });
     });
-  }
-
-  // Display user info if available
-  const user = JSON.parse(localStorage.getItem('user-data'));
-  if (user) {
-    // You could add a user info display here if desired
-    console.log(`Welcome back, ${user.username}!`);
   }
 
 });

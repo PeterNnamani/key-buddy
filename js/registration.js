@@ -1,5 +1,6 @@
-export default function showRegistrationModal({ showCountDown }) {
+export default function showRegistrationModal({ saveUserData, makeRequest, showCountDown }) {
   const registrationModal = document.getElementById('registration-modal');
+  const feedback = document.getElementById('feedback');
   const registrationForm = registrationModal.querySelector('#registration-form');
   const avatarOptions = registrationModal.querySelectorAll('.avatar-option');
   const selectedAvatarInput = registrationModal.querySelector('#selected-avatar');
@@ -32,14 +33,27 @@ export default function showRegistrationModal({ showCountDown }) {
       };
 
       console.log('Form data ', formData);
-      localStorage.setItem('user-data', JSON.stringify(formData));
-      localStorage.setItem('has-registered', 'true');
-      registrationModal.classList.add('hidden');
 
-      // Immediately continue to level 4 after registration
-      //  const currentLevel = 4;
-      showCountDown(4)
+      makeRequest({
+        payload: formData,
+        onSuccess: function (result) {
+          if (result.status) {
+            const data = result.response;
+
+            formData.id = data.id;
+            formData.type = 'update';
+
+            saveUserData(formData);
+            localStorage.setItem('has-registered', 'true');
+            registrationModal.classList.add('hidden');
+            registrationForm.dataset.listenerAttached = 'true';
+
+            showCountDown(4);
+          } else {
+            feedback.textContent = result.message;
+          }
+        }
+      });
     });
-    registrationForm.dataset.listenerAttached = 'true';
   }
 }
