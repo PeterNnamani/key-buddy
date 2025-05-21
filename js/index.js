@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let totalTime = 0;
   let totalCorrectChars = 0;
   let totalTypedChars = 0;
-  let averageWPM = 0;
+ // let averageWPM = 0;
 
   // Check if user is registered
   let alreadyRegistered = localStorage.getItem('has-registered') === 'true';
@@ -732,33 +732,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Update level progress
-  function updateLevelProgress() {
-    const progress = ((currentLevel + 1) / 6) * 100;
-    levelProgressElement.style.width = `${progress}%`;
-    // Update level markers
-    updateLevelIndicators();
-  }
-
-  // // Show completion modal
-  // function showCompletionModal() {
-  //   // Calculate final statistics
-  //   const accuracy =
-  //     Math.round((totalCorrectChars / totalTypedChars) * 100) || 100;
-  //   averageWPM = Math.round(totalCorrectChars / 5 / (totalTime / 60));
-
-  //   // Update modal content
-  //   modalScore.textContent = totalScore;
-  //   modalSpeed.textContent = `${averageWPM} WPM`;
-  //   modalAccuracy.textContent = `${accuracy}%`;
-
-  //   // Add player to leaderboard
-  //   addToLeaderboard(totalScore, averageWPM, totalTime);
-
-  //   // Show modal
-  //   completionModal.classList.remove('hidden');
-  // }
-
   // Add player to leaderboard
   function addToLeaderboard(score, speed, time, accuracy) {
     // Get user data
@@ -822,19 +795,6 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (error) {
       console.error('API error:', error);
     }
-  }
-
-  // Helper to get or generate a unique device id
-  function getDeviceId() {
-    let id = localStorage.getItem('keybuddyDeviceId');
-    if (!id) {
-      id =
-        window.crypto && crypto.randomUUID
-          ? crypto.randomUUID()
-          : Math.random().toString(36).slice(2) + Date.now();
-      localStorage.setItem('keybuddyDeviceId', id);
-    }
-    return id;
   }
 
   // Reset keyboard
@@ -1034,9 +994,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Play again button on leaderboard modal
-  const playAgainLeaderboardButton = document.getElementById(
-    'play-again-leaderboard'
-  );
+  const playAgainLeaderboardButton = document.getElementById('play-again-leaderboard');
   if (playAgainLeaderboardButton) {
     playAgainLeaderboardButton.addEventListener('click', () => {
       leaderboardModal.classList.add('hidden');
@@ -1065,35 +1023,4 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log(`Welcome back, ${user.username}!`);
   }
 
-  // Function to show the level completion modal
-  function showLevelCompletionModal(level) {
-    const modal = document.getElementById('level-completion-modal');
-    const message = document.getElementById('level-completion-message');
-    const continueButton = document.getElementById('continue-button');
-
-    // Update the modal message
-    message.textContent = `You have successfully completed Level ${level}!`;
-
-    // Show the modal
-    modal.classList.remove('hidden');
-
-    // Add event listener to the continue button
-    continueButton.onclick = () => {
-      modal.classList.add('hidden'); // Hide the modal
-      startNextLevel(level + 1); // Start the next level
-    };
-  }
-
-  // Example function to simulate level completion
-  function completeLevel(level) {
-    // Simulate level completion logic
-    console.log(`Level ${level} completed!`);
-    showLevelCompletionModal(level);
-  }
-
-  // Example function to start the next level
-  function startNextLevel(level) {
-    console.log(`Starting Level ${level}...`);
-    // Add logic to initialize the next level
-  }
 });
