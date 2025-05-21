@@ -139,19 +139,142 @@ document.addEventListener('DOMContentLoaded', () => {
     textDisplay.innerHTML = '';
     const container = document.createElement('div');
     container.style.position = 'relative';
-    container.style.minHeight = '300px'; // Match .typing-text height for full animation
+    container.style.minHeight = '300px';
     container.style.overflow = 'hidden';
 
-    // Level 2: Scroll words from bottom to top, one at a time, always visible
+    // Always clear any previous per-level timeouts and listeners
+    if (window._levelTimeouts) {
+      window._levelTimeouts.forEach(clearTimeout);
+    }
+    window._levelTimeouts = [];
+    document.removeEventListener('keydown', window._levelKeydownHandler || (() => {}));
+    window._levelKeydownHandler = null;
+    // Only attach global handler for level 1
+    if (window._globalKeydownHandler) {
+      document.removeEventListener('keydown', window._globalKeydownHandler);
+    }
+    if (currentLevel === 1) {
+      window._globalKeydownHandler = handleTyping;
+      document.addEventListener('keydown', handleTyping);
+    }
+
+    // Level 1: All words appear at once, static
+    if (currentLevel === 1) {
+      words.forEach((word, index) => {
+        const wordElement = document.createElement('span');
+        wordElement.textContent = word;
+        wordElement.classList.add('word');
+        if (index === currentWordIndex) {
+          wordElement.classList.add('current');
+        }
+        wordElement.style.opacity = '1';
+        container.appendChild(wordElement);
+      });
+      textDisplay.appendChild(container);
+      showNextKeySuggestion();
+      // Timer is managed globally, nothing special needed
+      return;
+    }
+
+    // Level 2: Scroll words from right to left, one at a time
     if (currentLevel === 2) {
       let level2Timeout = null;
-
+      let isWordActive = false;
       function showWord(index) {
         container.innerHTML = '';
         if (index >= words.length) {
-          // Clean up handler when level ends
-          document.removeEventListener('keydown', level2KeydownHandler);
-       
+          document.removeEventListener('keydown', window._levelKeydownHandler);
+          endLevel();
+          return;
+        }
+        const wordElement = document.createElement('span');
+        wordElement.textContent = words[index];
+        wordElement.classList.add('word', 'current');
+        wordElement.style.position = 'absolute';
+        wordElement.style.top = '20%';
+        wordElement.style.transform = 'translateY(-50%)';
+        wordElement.style.right = '-200px';
+        wordElement.style.opacity = '1';
+        wordElement.style.transition = 'right 4.5s linear, opacity 0.3s';
+        container.appendChild(wordElement);
+        setTimeout(() => {
+          wordElement.style.right = '100%';
+          currentWordIndex = index;
+          currentTypedWord = '';
+          isWordActive = true;
+          renderCurrentWordWithInput();
+          showNextKeySuggestion();
+        }, 10);
+        // Hide after it reaches the left, and mark as incorrect if not typed
+        level2Timeout = setTimeout(() => {
+          wordElement.style.opacity = '0';
+          if (gameActive && currentWordIndex === index && isWordActive) {
+            updateWordStatus(currentWordIndex, 'incorrect');
+            incorrectWords++;
+            totalTypedChars += currentTypedWord.length;
+            isWordActive = false;
+            setTimeout(() => {
+              currentWordIndex++;
+              currentTypedWord = '';
+              updateStats();
+              showWord(index + 1);
+            }, 300);
+          }
+        }, 4600);
+        window._levelTimeouts.push(level2Timeout);
+      }
+      showWord(0);
+      textDisplay.appendChild(container);
+      window._levelKeydownHandler = function (e) {
+        if (currentLevel !== 2 || !gameActive || !isWordActive) return;
+        if (e.key === ' ') {
+          e.preventDefault();
+          const typedWord = currentTypedWord.trim().toLowerCase();
+          const currentWord = words[currentWordIndex];
+          if (typedWord === '') return;
+          if (typedWord === currentWord) {
+            updateWordStatus(currentWordIndex, 'correct');
+            correctWords++;
+            totalCorrectChars += currentWord.length;
+          } else {
+            updateWordStatus(currentWordIndex, 'incorrect');
+            incorrectWords++;
+          }
+          totalTypedChars += typedWord.length;
+          clearTimeout(level2Timeout);
+          isWordActive = false;
+          // Fade out the word, then show the next word after a short delay
+          const wordElements = textDisplay.querySelectorAll('.word');
+          if (wordElements[currentWordIndex]) {
+            wordElements[currentWordIndex].style.opacity = '0';
+          }
+          setTimeout(() => {
+            currentWordIndex++;
+            currentTypedWord = '';
+            updateStats();
+            showWord(currentWordIndex);
+          }, 300); // short delay for fade out
+        } else if (e.key === 'Backspace') {
+          currentTypedWord = currentTypedWord.slice(0, -1);
+          renderCurrentWordWithInput();
+        } else if (e.key.length === 1) {
+          if (currentTypedWord.length < words[currentWordIndex].length + 10) {
+            currentTypedWord += e.key;
+            renderCurrentWordWithInput();
+          }
+        }
+      };
+      document.addEventListener('keydown', window._levelKeydownHandler);
+      return;
+    }
+
+    // Level 3: Scroll words from bottom to top, one at a time
+    if (currentLevel === 3) {
+      let level3Timeout = null;
+      function showWord(index) {
+        container.innerHTML = '';
+        if (index >= words.length) {
+          document.removeEventListener('keydown', window._levelKeydownHandler);
           endLevel();
           return;
         }
@@ -161,22 +284,18 @@ document.addEventListener('DOMContentLoaded', () => {
         wordElement.style.position = 'absolute';
         wordElement.style.left = '50%';
         wordElement.style.transform = 'translateX(-50%)';
-        wordElement.style.bottom = '0px';
+        wordElement.style.bottom = '-40px';
         wordElement.style.opacity = '1';
-        wordElement.style.transition = 'bottom 5.5s linear';
-
+        wordElement.style.transition = 'bottom 4.5s linear';
         container.appendChild(wordElement);
-
         setTimeout(() => {
-          wordElement.style.bottom = '340px';
+          wordElement.style.bottom = '100%';
           currentWordIndex = index;
           currentTypedWord = '';
           renderCurrentWordWithInput();
           showNextKeySuggestion();
         }, 10);
-
-        // Hide after it reaches the top, and mark as incorrect if not typed
-        level2Timeout = setTimeout(() => {
+        level3Timeout = setTimeout(() => {
           wordElement.style.opacity = '0';
           if (gameActive && currentWordIndex === index) {
             updateWordStatus(currentWordIndex, 'incorrect');
@@ -187,24 +306,18 @@ document.addEventListener('DOMContentLoaded', () => {
             updateStats();
             showWord(index + 1);
           }
-        }, 5600); // 5.5s + 0.1s buffer
+        }, 4600);
+        window._levelTimeouts.push(level3Timeout);
       }
       showWord(0);
       textDisplay.appendChild(container);
-
-      // --- Remove global handler and add level 2 handler ---
-      if (globalKeydownHandler) {
-        document.removeEventListener('keydown', globalKeydownHandler);
-      }
-      level2KeydownHandler = function (e) {
-        if (currentLevel !== 2 || !gameActive) return;
+      window._levelKeydownHandler = function (e) {
+        if (currentLevel !== 3 || !gameActive) return;
         if (e.key === ' ') {
           e.preventDefault();
           const typedWord = currentTypedWord.trim().toLowerCase();
           const currentWord = words[currentWordIndex];
           if (typedWord === '') return;
-
-          // Check if word is correct
           if (typedWord === currentWord) {
             updateWordStatus(currentWordIndex, 'correct');
             correctWords++;
@@ -214,9 +327,7 @@ document.addEventListener('DOMContentLoaded', () => {
             incorrectWords++;
           }
           totalTypedChars += typedWord.length;
-
-          // Move to next word immediately
-          clearTimeout(level2Timeout); // Cancel the timer
+          clearTimeout(level3Timeout);
           currentWordIndex++;
           currentTypedWord = '';
           updateStats();
@@ -224,434 +335,179 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (e.key === 'Backspace') {
           currentTypedWord = currentTypedWord.slice(0, -1);
           renderCurrentWordWithInput();
-        } else if (e.key.length === 1 && e.key.match(/^[a-zA-Z0-9.,;:'\[\]\\\-=`~!@#$%^&*()_+/?<>|]/)) {
-          // Only add one character at a time
+        } else if (e.key.length === 1) {
           if (currentTypedWord.length < words[currentWordIndex].length + 10) {
             currentTypedWord += e.key;
             renderCurrentWordWithInput();
           }
         }
       };
-      document.addEventListener('keydown', level2KeydownHandler);
+      document.addEventListener('keydown', window._levelKeydownHandler);
       return;
     }
 
-    // Level 5: Show only one falling word at a time, continuously
-    if (currentLevel === 5) {
-      let passageWords = words;
-      let fallingIndex = 0;
-      let activeTimeout = null;
-
-      function showNextFallingWord() {
+    // Level 4: Words appear one by one, each for 5 seconds
+    if (currentLevel === 4) {
+      let level4Timeout = null;
+      function showWord(index) {
         container.innerHTML = '';
-        if (fallingIndex >= passageWords.length) {
+        if (index >= words.length) {
+          document.removeEventListener('keydown', window._levelKeydownHandler);
           endLevel();
           return;
         }
-        const wordSpan = document.createElement('span');
-        wordSpan.textContent = passageWords[fallingIndex];
-        wordSpan.classList.add('word', 'current');
-        wordSpan.style.position = 'absolute';
-        wordSpan.style.left = '50%';
-        wordSpan.style.transform = 'translateX(-50%)';
-        wordSpan.style.top = '-40px';
-        wordSpan.style.opacity = '1';
-        wordSpan.style.transition = 'top 2.5s linear'; // Slower fall
-
-        container.appendChild(wordSpan);
-
-        setTimeout(() => {
-          wordSpan.style.top = '240px';
-        }, 10);
-
-        // Timeout for word to reach the bottom (slower)
-        activeTimeout = setTimeout(() => {
-          // If not typed, mark as missed/incorrect
-          if (gameActive && currentWordIndex === fallingIndex) {
-            wordSpan.classList.remove('current');
-            wordSpan.classList.add('incorrect');
+        const wordElement = document.createElement('span');
+        wordElement.textContent = words[index];
+        wordElement.classList.add('word', 'current');
+        wordElement.style.position = 'absolute';
+        wordElement.style.left = '50%';
+        wordElement.style.top = '20%';
+        wordElement.style.transform = 'translate(-50%, -50%)';
+        wordElement.style.opacity = '1';
+        wordElement.style.transition = 'opacity 0.5s';
+        container.appendChild(wordElement);
+        currentWordIndex = index;
+        currentTypedWord = '';
+        renderCurrentWordWithInput();
+        showNextKeySuggestion();
+        level4Timeout = setTimeout(() => {
+          wordElement.style.opacity = '0';
+          if (gameActive && currentWordIndex === index) {
+            updateWordStatus(currentWordIndex, 'incorrect');
             incorrectWords++;
             totalTypedChars += currentTypedWord.length;
             currentWordIndex++;
-            currentWordIndex++;
             currentTypedWord = '';
             updateStats();
-            fallingIndex++;
-            showNextFallingWord();
+            showWord(index + 1);
           }
-        }, 3600); // Slower fall duration
+        }, 5000);
+        window._levelTimeouts.push(level4Timeout);
       }
-
-      // Listen for space to submit word
-      function handleLevel5FallingTyping(e) {
-        if (currentLevel !== 5 || !gameActive) {
-          document.removeEventListener('keydown', handleLevel5FallingTyping);
-          return;
-        }
+      showWord(0);
+      textDisplay.appendChild(container);
+      window._levelKeydownHandler = function (e) {
+        if (currentLevel !== 4 || !gameActive) return;
         if (e.key === ' ') {
           e.preventDefault();
           const typedWord = currentTypedWord.trim().toLowerCase();
-          const currentWord = passageWords[fallingIndex];
-          const wordElement = container.querySelector('.word.current');
+          const currentWord = words[currentWordIndex];
           if (typedWord === '') return;
-
           if (typedWord === currentWord) {
-            if (wordElement) {
-              wordElement.classList.remove('current');
-              wordElement.classList.add('correct');
-            }
+            updateWordStatus(currentWordIndex, 'correct');
             correctWords++;
             totalCorrectChars += currentWord.length;
           } else {
-            if (wordElement) {
-              wordElement.classList.remove('current');
-              wordElement.classList.add('incorrect');
-            }
+            updateWordStatus(currentWordIndex, 'incorrect');
             incorrectWords++;
           }
           totalTypedChars += typedWord.length;
-          currentTypedWord = '';
-          clearTimeout(activeTimeout);
+          clearTimeout(level4Timeout);
           currentWordIndex++;
+          currentTypedWord = '';
           updateStats();
-          fallingIndex++;
-          setTimeout(showNextFallingWord, 100); // Small delay before next word
-        } else {
-          currentTypedWord += e.key;
+          showWord(currentWordIndex);
+        } else if (e.key === 'Backspace') {
+          currentTypedWord = currentTypedWord.slice(0, -1);
+          renderCurrentWordWithInput();
+        } else if (e.key.length === 1) {
+          if (currentTypedWord.length < words[currentWordIndex].length + 10) {
+            currentTypedWord += e.key;
+            renderCurrentWordWithInput();
+          }
         }
-      }
-
-      // Reset state for level 5
-      currentTypedWord = '';
-      currentWordIndex = 0;
-      document.removeEventListener('keydown', handleLevel5FallingTyping);
-      document.addEventListener('keydown', handleLevel5FallingTyping);
-
-      showNextFallingWord();
-      textDisplay.appendChild(container);
+      };
+      document.addEventListener('keydown', window._levelKeydownHandler);
       return;
     }
 
-    words.forEach((word, index) => {
-      const wordElement = document.createElement('span');
-      wordElement.textContent = word;
-      wordElement.classList.add('word');
-      if (index === currentWordIndex) {
-        wordElement.classList.add('current');
-      }
-
-      switch (currentLevel) {
-        case 1:
-          // Static display
-          wordElement.style.opacity = '1';
-          break;
-
-        case 2:
-          wordElement.style.position = 'absolute';
-          wordElement.style.left = '50%';
-          wordElement.style.transform = 'translateX(-50%)';
-          wordElement.style.bottom = '-2px'; // start below
-          const scrollDuration = 4000;
-          const level2DelayBetweenWords = scrollDuration;
-
-          setTimeout(() => {
-            wordElement.style.transition = `bottom ${
-              scrollDuration / 2000
-            }s linear`;
-            wordElement.style.bottom = '100%';
-          }, index * level2DelayBetweenWords);
-
-          // Move to next word when word disappears
-          setTimeout(() => {
-            if (!gameActive) return;
-            if (currentWordIndex === index) {
-              // If user hasn't finished typing, mark as incorrect
-              if (currentTypedWord.trim() !== words[currentWordIndex]) {
-                updateWordStatus(currentWordIndex, 'incorrect');
-                incorrectWords++;
-                totalTypedChars += currentTypedWord.length;
-              }
-              currentWordIndex++;
-              currentTypedWord = '';
-              if (currentWordIndex < words.length) {
-                renderCurrentWordWithInput();
-              }
-              updateStats();
-              // End level if last word
-              if (currentWordIndex >= words.length) {
-                endLevel();
-              }
-            }
-          }, (index + 1) * level2DelayBetweenWords);
-          break;
-
-        case 3:
-          if (index === 0) {
-            let slideIndex = 0;
-            let typed = '';
-
-            function slideNextWord() {
-              container.innerHTML = '';
-              if (slideIndex >= words.length) {
-                endLevel();
-                return;
-              }
-              typed = '';
-              currentWordIndex = slideIndex;
-              currentTypedWord = '';
-              const wordSpan = document.createElement('span');
-              wordSpan.textContent = words[slideIndex];
-              wordSpan.classList.add('word', 'current');
-              wordSpan.style.position = 'absolute';
-              wordSpan.style.right = '-100%';
-              wordSpan.style.top = '30%';
-              wordSpan.style.transform = 'translateY(-50%)';
-              wordSpan.style.transition = 'right 0s';
-
-              container.appendChild(wordSpan);
-
-              setTimeout(() => {
-                wordSpan.style.right = '0%';
-              }, 10);
-
-              setTimeout(() => {
-                wordSpan.style.transition = 'right 5.5s linear';
-                wordSpan.style.right = '110%';
-              }, 30);
-
-              function handleTyping(e) {
-                if (currentLevel !== 3 || !gameActive) {
-                  document.removeEventListener('keydown', handleTyping);
-                  return;
-                }
-                if (e.key === 'Backspace') {
-                  typed = typed.slice(0, -1);
-                  currentTypedWord = typed;
-                  renderCurrentWordWithInput();
-                  return;
-                }
-                if (e.key === ' ') {
-                  e.preventDefault();
-                  const typedWord = typed.trim().toLowerCase();
-                  const currentWord = words[slideIndex];
-                  if (typedWord === '') return;
-                  if (typedWord === currentWord) {
-                    wordSpan.classList.remove('current');
-                    wordSpan.classList.add('correct');
-                    correctWords++;
-                    totalCorrectChars += currentWord.length;
-                  } else {
-                    wordSpan.classList.remove('current');
-                    wordSpan.classList.add('incorrect');
-                    incorrectWords++;
-                  }
-                  totalTypedChars += typedWord.length;
-                  typed = '';
-                  document.removeEventListener('keydown', handleTyping);
-                  setTimeout(() => {
-                    slideIndex++;
-                    updateStats();
-                    slideNextWord();
-                  }, 200);
-                } else if (e.key.length === 1) {
-                  typed += e.key;
-                  currentTypedWord = typed;
-                  renderCurrentWordWithInput();
-                }
-              }
-              document.removeEventListener('keydown', handleTyping);
-              document.addEventListener('keydown', handleTyping);
-
-              setTimeout(() => {
-                if (
-                  gameActive &&
-                  typed.trim().toLowerCase() !== words[slideIndex]
-                ) {
-                  wordSpan.classList.remove('current');
-                  wordSpan.classList.add('incorrect');
-                  incorrectWords++;
-                  totalTypedChars += typed.length;
-                  typed = '';
-                  document.removeEventListener('keydown', handleTyping);
-                  updateStats();
-                }
-                slideIndex++;
-                slideNextWord();
-              }, 5700); // Animation duration + buffer
-            }
-
-            slideNextWord();
-            textDisplay.appendChild(container);
-            return;
-          }
+    // Level 5: Words fall from top to bottom, one at a time
+    if (currentLevel === 5) {
+      let level5Timeout = null;
+      function showWord(index) {
+        container.innerHTML = '';
+        if (index >= words.length) {
+          document.removeEventListener('keydown', window._levelKeydownHandler);
+          endLevel();
           return;
-
-        case 4:
-          // Words appear one by one, stay for 10 seconds, then disappear
-          wordElement.style.position = 'absolute';
-          wordElement.style.left = '50%'; // Center horizontally
-          wordElement.style.top = '30%'; // Center vertically
-          wordElement.style.transform = 'translate(-50%, -50%)'; // Adjust for both horizontal and vertical centering
-          wordElement.style.opacity = '0'; // Initially hidden
-          wordElement.style.transition = 'opacity 0.5s ease-in-out';
-          // Smooth fade-in and fade-out
-
-          // Only show one word at a time with a 10-second display time
-          const displayTime = 8000; // 10 seconds in milliseconds
-          const level4DelayBetweenWords = displayTime; // Each word gets the full display time
-
-          // Schedule when this word should appear
-          setTimeout(() => {
-            if (!gameActive) return; // Stop if the level is no longer active
-
-            // Make the word visible
-            wordElement.style.opacity = '1'; // Fade in
-
-            // Schedule when this word should disappear
-            setTimeout(() => {
-              if (!gameActive) return; // Stop if the level is no longer active
-              wordElement.style.opacity = '0'; // Fade out after 10 seconds
-            }, displayTime - 500); // Start fade-out 0.5 seconds before the next word
-          }, index * level4DelayBetweenWords); // Delay each word's animation based on its index
-          break;
-
-        case 5:
-          if (index === 0) {
-            const passageWords = words[0].split(' ');
-            let activeWordTimeouts = [];
-
-            // Reset state
+        }
+        const wordElement = document.createElement('span');
+        wordElement.textContent = words[index];
+        wordElement.classList.add('word', 'current');
+        wordElement.style.position = 'absolute';
+        wordElement.style.left = '50%';
+        wordElement.style.top = '-40px';
+        wordElement.style.transform = 'translateX(-50%)';
+        wordElement.style.opacity = '1';
+        wordElement.style.transition = 'top 4.5s linear';
+        container.appendChild(wordElement);
+        setTimeout(() => {
+          wordElement.style.top = '100%';
+          currentWordIndex = index;
+          currentTypedWord = '';
+          renderCurrentWordWithInput();
+          showNextKeySuggestion();
+        }, 10);
+        level5Timeout = setTimeout(() => {
+          wordElement.style.opacity = '0';
+          if (gameActive && currentWordIndex === index) {
+            updateWordStatus(currentWordIndex, 'incorrect');
+            incorrectWords++;
+            totalTypedChars += currentTypedWord.length;
+            currentWordIndex++;
             currentTypedWord = '';
-            currentWordIndex = 0;
-
-            // Create and animate each word
-            passageWords.forEach((passageWord, wordIndex) => {
-              const wordSpan = document.createElement('span');
-              wordSpan.textContent = passageWord;
-              wordSpan.classList.add('word');
-
-              wordSpan.style.position = 'absolute';
-              wordSpan.style.left = `${20 + Math.random() * 60}%`;
-              wordSpan.style.top = '-40px';
-              wordSpan.style.opacity = '0';
-              wordSpan.style.transition = 'top 3s linear, opacity 0.5s ease';
-
-              wordSpan.dataset.wordIndex = wordIndex;
-              container.appendChild(wordSpan);
-
-              setTimeout(() => {
-                if (!gameActive) return;
-
-                wordSpan.style.opacity = '1';
-                wordSpan.style.top = '120%';
-
-                if (wordIndex === currentWordIndex) {
-                  wordSpan.classList.add('current');
-
-                  // Set timeout to auto-move to next word if not typed
-                  const disappearTimeout = setTimeout(() => {
-                    // Word disappears and is missed
-                    if (currentWordIndex === wordIndex) {
-                      wordSpan.classList.remove('current');
-                      wordSpan.classList.add('missed');
-                      incorrectWords++;
-                      moveToNextWord();
-                    }
-                  }, 3000); // Word falls over 3s
-
-                  activeWordTimeouts.push(disappearTimeout);
-                }
-              }, wordIndex * 1200);
-            });
-
-            // Keydown listener
-            document.addEventListener(
-              'keydown',
-              function handleLevel5Typing(e) {
-                if (currentLevel !== 5 || !gameActive) {
-                  document.removeEventListener('keydown', handleLevel5Typing);
-                  return;
-                }
-
-                if (e.key === ' ') {
-                  e.preventDefault();
-
-                  const typedWord = currentTypedWord.trim().toLowerCase();
-                  const currentPassageWord = passageWords[currentWordIndex];
-                  const currentWordElement = container.querySelector(
-                    `[data-word-index="${currentWordIndex}"]`
-                  );
-
-                  if (typedWord === '') return;
-
-                  if (typedWord === currentPassageWord) {
-                    if (currentWordElement) {
-                      currentWordElement.classList.remove('current');
-                      currentWordElement.classList.add('correct');
-                    }
-                    correctWords++;
-                    totalCorrectChars += currentPassageWord.length;
-                  } else {
-                    if (currentWordElement) {
-                      currentWordElement.classList.remove('current');
-                      currentWordElement.classList.add('incorrect');
-                    }
-                    incorrectWords++;
-                  }
-
-                  totalTypedChars += typedWord.length;
-                  currentTypedWord = '';
-
-                  // Clear timeout for this word
-                  clearTimeout(activeWordTimeouts[currentWordIndex]);
-
-                  moveToNextWord();
-                  updateStats();
-                } else {
-                  currentTypedWord += e.key;
-                }
-              }
-            );
-
-            // Move to next word
-            function moveToNextWord() {
-              currentWordIndex++;
-              if (currentWordIndex < passageWords.length) {
-                const nextWordElement = container.querySelector(
-                  `[data-word-index="${currentWordIndex}"]`
-                );
-                if (nextWordElement) {
-                  nextWordElement.classList.add('current');
-
-                  // Auto-remove if not typed in time
-                  const disappearTimeout = setTimeout(() => {
-                    if (
-                      currentWordIndex ===
-                      Number(nextWordElement.dataset.wordIndex)
-                    ) {
-                      nextWordElement.classList.remove('current');
-                      nextWordElement.classList.add('missed');
-                      incorrectWords++;
-                      moveToNextWord();
-                      updateStats();
-                    }
-                  }, 3000); // 3s fall
-
-                  activeWordTimeouts.push(disappearTimeout);
-                }
-              } else {
-                endLevel();
-              }
-            }
+            updateStats();
+            showWord(index + 1);
           }
-          break;
+        }, 4600);
+        window._levelTimeouts.push(level5Timeout);
       }
+      showWord(0);
+      textDisplay.appendChild(container);
+      window._levelKeydownHandler = function (e) {
+        if (currentLevel !== 5 || !gameActive) return;
+        if (e.key === ' ') {
+          e.preventDefault();
+          const typedWord = currentTypedWord.trim().toLowerCase();
+          const currentWord = words[currentWordIndex];
+          if (typedWord === '') return;
+          if (typedWord === currentWord) {
+            updateWordStatus(currentWordIndex, 'correct');
+            correctWords++;
+            totalCorrectChars += currentWord.length;
+          } else {
+            updateWordStatus(currentWordIndex, 'incorrect');
+            incorrectWords++;
+          }
+          totalTypedChars += typedWord.length;
+          clearTimeout(level5Timeout);
+          currentWordIndex++;
+          currentTypedWord = '';
+          updateStats();
+          showWord(currentWordIndex);
+        } else if (e.key === 'Backspace') {
+          currentTypedWord = currentTypedWord.slice(0, -1);
+          renderCurrentWordWithInput();
+        } else if (e.key.length === 1) {
+          if (currentTypedWord.length < words[currentWordIndex].length + 10) {
+            currentTypedWord += e.key;
+            renderCurrentWordWithInput();
+          }
+        }
+      };
+      document.addEventListener('keydown', window._levelKeydownHandler);
+      return;
+    }
 
-      container.appendChild(wordElement);
-    });
-
-    textDisplay.appendChild(container);
-    showNextKeySuggestion();
+    // After all per-level modes (after level 5 block), re-attach the global handler for static/fallback modes
+    if (![2,3,4,5].includes(currentLevel)) {
+      if (window._globalKeydownHandler) {
+        document.removeEventListener('keydown', window._globalKeydownHandler);
+      }
+      window._globalKeydownHandler = handleTyping;
+      document.addEventListener('keydown', handleTyping);
+    }
+    // ...existing code for fallback (should not be reached)...
   }
 
   // Add this helper to render the current word with per-letter coloring
@@ -1040,26 +896,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Highlight the next key to type (suggestion) in a clear color
   function showNextKeySuggestion() {
-    // Only remove previous suggestion, not all key highlights
-    document
-      .querySelectorAll('.key-suggest')
-      .forEach((k) => k.classList.remove('key-suggest'));
+    // Remove previous suggestions
+    document.querySelectorAll('.key-suggest').forEach((k) => k.classList.remove('key-suggest'));
     if (currentWordIndex < words.length) {
       const currentWord = words[currentWordIndex];
       if (currentWord) {
+        // If not finished typing the word, suggest the next character
         if (currentTypedWord.length < currentWord.length) {
-          // Suggest next character
-          const nextChar = currentWord[currentTypedWord.length].toUpperCase();
-          const nextKey = getKeyCode(nextChar);
-          const nextKeyElement = document.querySelector(
-            `[data-key="${nextKey}"]`
-          );
-          if (nextKeyElement) {
-            nextKeyElement.classList.add('key-suggest');
+          const nextChar = currentWord[currentTypedWord.length];
+          if (nextChar) {
+            // Support both upper and lower case
+            const nextKey = getKeyCode(nextChar.toUpperCase());
+            const nextKeyElement = document.querySelector(`[data-key="${nextKey}"]`);
+            if (nextKeyElement) {
+              nextKeyElement.classList.add('key-suggest');
+            }
           }
         } else {
           // Suggest space bar when word is complete
-          const spaceKey = document.querySelector(`[data-key="Space"]`);
+          const spaceKey = document.querySelector('[data-key="Space"]');
           if (spaceKey) {
             spaceKey.classList.add('key-suggest');
           }
@@ -1068,75 +923,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Add a suggestion display area above the keyboard
-  const suggestionDisplay = document.createElement('div');
-  suggestionDisplay.id = 'suggestion-display';
-  suggestionDisplay.style.textAlign = 'center';
-  suggestionDisplay.style.fontSize = '1.5rem';
-  suggestionDisplay.style.margin = '16px 0';
-  const keyboardContainer = document.querySelector('.keyboard-container') || document.body;
-  keyboardContainer.parentNode.insertBefore(suggestionDisplay, keyboardContainer);
-
-  // Show the current suggested word
-  function showWordSuggestion() {
-    if (currentWordIndex < words.length) {
-      suggestionDisplay.textContent = `Suggestion: ${words[currentWordIndex]}`;
-    } else {
-      suggestionDisplay.textContent = '';
-    }
-  }
-
-  // Update the suggestion when moving to the next word
-  function handleWordSuggestionInput(e) {
-    if (!gameActive) return;
-    if (e.key === ' ') {
-      e.preventDefault();
-      const typedWord = currentTypedWord.trim().toLowerCase();
-      const currentWord = words[currentWordIndex];
-      if (typedWord === '') return;
-      if (typedWord === currentWord) {
-        updateWordStatus(currentWordIndex, 'correct');
-        correctWords++;
-        totalCorrectChars += currentWord.length;
-      } else {
-        updateWordStatus(currentWordIndex, 'incorrect');
-        incorrectWords++;
-      }
-      totalTypedChars += typedWord.length;
-      currentWordIndex++;
-      currentTypedWord = '';
-      updateStats();
-      showWordSuggestion();
-      if (currentWordIndex >= words.length) {
-        endLevel();
-      } else {
-        renderCurrentWordWithInput();
-      }
-    } else if (e.key === 'Backspace') {
-      currentTypedWord = currentTypedWord.slice(0, -1);
-      renderCurrentWordWithInput();
-    } else if (e.key.length === 1) {
-      currentTypedWord += e.key;
-      renderCurrentWordWithInput();
-    }
-  }
-
-  // Remove previous keydown listeners and add the new one for suggestions
-  function attachSuggestionKeydownHandler() {
-    document.removeEventListener('keydown', handleWordSuggestionInput);
-    document.addEventListener('keydown', handleWordSuggestionInput);
-  }
-
-  // Call these when starting the game or a new level
-  // showWordSuggestion();
-  // attachSuggestionKeydownHandler();
-
-  // --- Place these at the top-level scope ---
-  let globalKeydownHandler;
-  let level2KeydownHandler;
-
-  // Event listeners
-  document.addEventListener('keydown', (e) => {
+  // Unified keyboard handler for all levels
+  function handleTyping(e) {
     if (!gameActive) {
       // Start game on Enter if not active
       if (e.key === 'Enter') {
@@ -1144,9 +932,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       return;
     }
-
-    // Skip for level 5 as it has its own event handler
-    if (currentLevel === 5) return;
 
     // Handle Backspace
     if (e.key === 'Backspace') {
@@ -1181,65 +966,41 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Move to next word
       currentWordIndex++;
-      currentTypedWord = ''; // Clear the current typed word
+      currentTypedWord = '';
 
-      // Check if all words are completed
-      if (currentWordIndex >= words.length) {
+      // Check if all words are completed (for static levels)
+      if (
+        (currentLevel === 1 && currentWordIndex >= words.length) ||
+        (currentLevel === 5 && correctWords >= 50)
+      ) {
         endLevel();
+      } else if (
+        [2, 3, 4, 5].includes(currentLevel) && currentWordIndex < words.length
+      ) {
+        // For scrolling/falling levels, trigger next word
+        displayWords();
       } else {
         renderCurrentWordWithInput();
       }
       updateStats();
-    } else {
-      // Append typed character to the current word
+      return;
+    }
+
+    // Append typed character to the current word
+    if (currentTypedWord.length < (words[currentWordIndex]?.length || 0) + 10) {
       currentTypedWord += e.key;
       renderCurrentWordWithInput();
       updateKeyboard(e.code, 'pressed');
     }
-  });
-
-  // Add event listener for level 5 typing
-  function handleLevel5Typing(e) {
-    if (currentLevel !== 5 || !gameActive) return;
-
-    if (e.key === ' ') {
-      e.preventDefault();
-      const typedWord = currentTypedWord.trim().toLowerCase(); // Convert typed word to lowercase
-      const currentWord = words[currentWordIndex];
-      if (typedWord === '') return;
-
-      // Check if word is correct
-      if (typedWord === currentWord) {
-        updateWordStatus(currentWordIndex, 'correct');
-        correctWords++;
-        totalCorrectChars += currentWord.length;
-
-        // Update progress bar for level 5
-        const progress = (correctWords / 50) * 100; // Target is 50 words
-        progressFill.style.width = `${progress}%`;
-
-        // Check if 50 correct words are typed
-        if (correctWords >= 50) {
-          endLevel();
-          return;
-        }
-      } else {
-        updateWordStatus(currentWordIndex, 'incorrect');
-        incorrectWords++;
-      }
-      totalTypedChars += typedWord.length;
-      currentTypedWord = ''; // Reset typed word
-
-      // Move to next word
-      currentWordIndex++;
-      updateStats();
-    } else {
-      currentTypedWord += e.key;
-    }
   }
 
-  // Attach level 5 typing handler
-  document.addEventListener('keydown', handleLevel5Typing);
+  // Remove all individual keydown handlers in displayWords and attach only the unified handler
+  // Remove previous keydown event listeners if any
+  if (window._globalKeydownHandler) {
+    document.removeEventListener('keydown', window._globalKeydownHandler);
+  }
+  window._globalKeydownHandler = handleTyping;
+  document.addEventListener('keydown', handleTyping);
 
   // Initialize the current typed word
   let currentTypedWord = '';
