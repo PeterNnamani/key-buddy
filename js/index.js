@@ -49,6 +49,17 @@ document.addEventListener('DOMContentLoaded', () => {
   // Check if user is registered
   let alreadyRegistered = localStorage.getItem('has-registered') === 'true';
 
+  // Show leaderboard on load if user is registered
+  const leaderboardData = JSON.parse(localStorage.getItem('keybuddyLeaderboard')) || [];
+  if (localStorage.getItem('has-registered') === 'true') {
+    // Show leaderboard first
+    showLeaderboard(leaderboardData);
+    document.getElementById('intro-page').classList.add('hidden');
+  } else {
+    // Show intro page for new users
+    document.getElementById('intro-page').classList.remove('hidden');
+  }
+
   // Initialize the game
   function initGame() {
     resetGameState();
