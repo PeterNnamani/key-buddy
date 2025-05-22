@@ -963,13 +963,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Start game button
   const startGameBtn = document.getElementById('start-game');
-  
+  document.getElementById('intro-page').classList.add('hidden');
+
   if (startGameBtn) {
     startGameBtn.addEventListener('click', () => {
       document.getElementById('intro-page').classList.add('hidden');
-      showCountdownAnimation(() => {
-        initGame();
-      });
+      // showCountdownAnimation(() => {
+      //  // initGame();
+      // });
     });
   }
 
