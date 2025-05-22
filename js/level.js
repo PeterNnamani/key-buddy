@@ -6,7 +6,7 @@ const levels = [
             'from', 'they', 'will', 'one', 'would', 'there', 'their',
             'what', 'about', 'which', 'when', 'your',
         ],
-        timeLimit: 30,
+        timeLimit: 2,
         requiredSpeed: 20,
     },
     {
@@ -17,8 +17,8 @@ const levels = [
             'community', 'experience', 'technology', 'available', 'following',
             'resources', 'including', 'business', 'management', 'activities',
         ],
-        timeLimit: 30,
-        requiredSpeed: 30,
+        timeLimit: 2,
+        requiredSpeed: 2,
     },
     {
         // Level 3
@@ -29,7 +29,7 @@ const levels = [
             'successfully', 'requirements', 'individuals', 'performance', 'experience',
             'everything', 'technology',
         ],
-        timeLimit: 30,
+        timeLimit: 2,
         requiredSpeed: 40,
     },
     {
@@ -41,7 +41,7 @@ const levels = [
             'Sharpened', 'Gathered', 'Dreamland', 'Freshener', 'Harmonies', 'Energizer',
             'Finalists', 'Generated', 'Rewritten', 'Enriched', 'Declined', 'Completed',
         ],
-        timeLimit: 30,
+        timeLimit: 2,
         requiredSpeed: 20,
     },
     {
@@ -49,7 +49,7 @@ const levels = [
         words: [
             "The journey of a thousand miles begins with a single step. Every great achievement requires time and dedication. Success is not final, failure is not fatal, it is the courage to continue that counts. Believe you can and you're halfway there. The future belongs to those who believe in the beauty of their dreams.",
         ],
-        timeLimit: 30,
+        timeLimit: 2,
         requiredSpeed: 20,
     },
 ];

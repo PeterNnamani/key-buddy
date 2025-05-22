@@ -1,5 +1,15 @@
-// Show leaderboard
-export default function showLeaderboard(results) {
+import makeRequest from "./request";
+
+makeRequest({
+    method: 'GET',
+    onSuccess: function (result) {
+        if (result.status) {
+            showLeaderboard(result.response);
+        }
+    }
+});
+
+function showLeaderboard(results) {
     const leaderboardModal = document.getElementById('leaderboard-modal');
     const leaderboardBody = document.getElementById('leaderboard-body');
     const leaderboardCards = document.getElementById('leaderboard-cards');
