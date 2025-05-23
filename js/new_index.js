@@ -151,6 +151,7 @@ function startLevel4() {
         }
 
         currentWord = words[index];
+        typingInput.value = '';
         textDisplay.innerHTML = '';
 
         const wordSpanContainer = document.createElement('span');
@@ -169,11 +170,18 @@ function startLevel4() {
 
         textDisplay.appendChild(wordSpanContainer);
 
-        // Fade-out after 5 seconds, but do NOT auto-swap words here to avoid conflict
+        // Fade out and move to next word regardless of user input
         setTimeout(() => {
             wordSpanContainer.classList.remove('fade-in');
             wordSpanContainer.classList.add('fade-out');
-        }, 3000);
+
+            // Wait for fade to complete
+            setTimeout(() => {
+                currentWordIndex++;
+                progressFill.style.width = `${(currentWordIndex / words.length) * 100}%`;
+                showWord(currentWordIndex);
+            }, 500); // Match CSS fade-out duration
+        }, 5000); // Show word for 5s
     }
 
     showWord(currentWordIndex);
@@ -191,10 +199,9 @@ function startLevel4() {
     typingInput.oninput = () => {
         if (!startTime) startTime = new Date();
 
-        const userInput = typingInput.value.trim();
+        const userInput = typingInput.value;
         totalTypedChars++;
-
-        correctChars = 0; // reset count each input
+        correctChars = 0;
 
         spans.forEach((span, i) => {
             const typedChar = userInput[i];
@@ -212,21 +219,7 @@ function startLevel4() {
             }
         });
 
-        if (userInput === currentWord) {
-            // Disable input while waiting to show next word
-            typingInput.disabled = true;
-
-            setTimeout(() => {
-                currentWordIndex++;
-                typingInput.value = '';
-                typingInput.disabled = false;
-                typingInput.focus();
-                showWord(currentWordIndex);
-                progressFill.style.width = `${(currentWordIndex / words.length) * 100}%`;
-            }, 1000); // 1 second delay before showing next word
-        }
-
-        const accuracy = correctChars === 0 ? 100 : Math.round((correctChars / totalTypedChars) * 100);
+        const accuracy = totalTypedChars === 0 ? 100 : Math.round((correctChars / totalTypedChars) * 100);
         accuracyElement.textContent = `${accuracy}%`;
 
         const elapsedTime = (new Date() - startTime) / 1000;
@@ -235,6 +228,7 @@ function startLevel4() {
         typingSpeedElement.textContent = `${speedWPM} WPM`;
     };
 }
+
 
 
 
