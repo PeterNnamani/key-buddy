@@ -64,7 +64,7 @@ const levels = [
             "Be honest, even when it's not easy.",
             "Every small step leads to a big change."
         ],
-        timeLimit: 10,
+        timeLimit: 30,
         requiredSpeed: 35,
     },
     {

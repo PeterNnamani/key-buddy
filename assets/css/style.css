@@ -53,32 +53,6 @@ body {
   }
 }
 
-
-
-/* .text-display-container {
-  margin-top: 0.25rem;
-  margin-bottom: 2em;
-} */
-
-
-/* .typing-text {
-  height: 150px;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  overflow: hidden;
-  position: relative;
-  display: block;
-  font-size: 12px;
-} */
-
-
-/* .keyboard-container {
-  max-width: 100%;
-  padding: 0 8px;
-} */
-
 .key {
   flex: 1 1 auto;
   height: 40px;
@@ -204,6 +178,104 @@ body {
 .pulse-animation {
   animation: pulse 1.5s infinite;
 }
+
+#text-display {
+  overflow: hidden;          /* This clips the overflow */
+  position: relative;        /* Needed for proper animation context */
+  width: 100%;               /* Ensures it stays within the container */
+        /* Optional: height control if needed */
+}
+
+@keyframes scrollText {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.scroll-text {
+  display: inline-block;
+  white-space: nowrap;
+  position: absolute;
+  animation: scrollText linear infinite;
+  will-change: transform;
+}
+
+.scroll-text-vertical {
+  position: absolute;
+  bottom: 0;
+  transform: translateX(-50%);
+  animation: scrollTextVertical 6s linear forwards;
+  white-space: nowrap;
+}
+
+@keyframes scrollTextVertical {
+  0% {
+    transform: translateY(100%);
+  }
+  100% {
+    transform: translateY(-100%);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s forwards;
+}
+
+.fade-out {
+  animation: fadeOut 0.5s forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+/* Style for each falling word */
+.falling-word {
+  position: absolute;
+  font-size: 24px;
+  color: #fff;
+  top: 0;
+  left: 0;
+  white-space: nowrap;
+  animation: fall 5s linear infinite;
+}
+
+/* Animation for falling effect */
+@keyframes fall {
+  0% {
+      transform: translateY(0);
+  }
+  100% {
+      transform: translateY(100vh); /* Adjust based on container height */
+  }
+}
+
+
+span.word {
+  display: inline-block;
+  transition: color 0.2s, background 0.2s;
+}
+
+span.word.correct {
+  color: green;
+  font-weight: bold;
+}
+
+span.word.incorrect {
+  color: red;
+  font-weight: bold;
+}
+
+
 
 /* Reduce the size of game stats */
 #typing-speed,
