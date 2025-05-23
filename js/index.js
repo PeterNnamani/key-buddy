@@ -51,15 +51,6 @@ document.addEventListener('DOMContentLoaded', () => {
     return localStorage.getItem('has-registered') === 'true';
   }
 
-  // // Show leaderboard on load if user is registered
-  // if (alreadyRegistered) {
-  //   // Show leaderboard first
-  //   location.hash = '';
-  //   document.getElementById('intro-page').classList.add('hidden');
-  // } else {
-  //   // Show intro page for new users
-  //   document.getElementById('intro-page').classList.remove('hidden');
-  // }
 
   // Initialize the game
   function initGame() {
@@ -111,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Load level
   function loadLevel(level) {
-    const levelData = levels[level - 1];
+    const levelData = levels[level - 1].words;
     words = levelData.words.map((word) => word.toLowerCase()); // Convert all words to lowercase
     timeLeft = levelData.timeLimit;
     timerElement.textContent = timeLeft;
@@ -645,6 +636,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const levelCompletionModal = document.getElementById(
         'level-completion-modal'
       );
+      
       levelCompletionModal.classList.remove('hidden');
 
       const nextLevelButton = document.getElementById('next-level-button');
@@ -938,16 +930,8 @@ document.addEventListener('DOMContentLoaded', () => {
     initGame();
   });
 
-  // Close leaderboard button
-  closeLeaderboardButton.addEventListener('click', () => {
-    leaderboardModal.classList.add('hidden');
-  });
-
   // Back to results button
-  backToResultsButton.addEventListener('click', () => {
-    leaderboardModal.classList.add('hidden');
-    completionModal.classList.remove('hidden');
-  });
+
 
   // Play again button on leaderboard modal
   const playAgainLeaderboardButton = document.getElementById('play-again-leaderboard');
@@ -960,6 +944,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
   }
+  
 
   // Start game button
   const startGameBtn = document.getElementById('start-game');

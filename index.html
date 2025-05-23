@@ -72,109 +72,125 @@
     </div>
   </header>
 
-  <main class="flex-grow flex flex-col items-center justify-center4 mt-12">
-    <div class="container mx-auto max-w-4xl">
-      <!-- Level progress indicator -->
-      <div class="mb-8 px-4">
-        <div class="level-indicator">
-          <div class="level-progress" id="level-progress" style="width: 0%"></div>
-          <div class="level-marker active" style="left: 0%"></div>
-          <div class="level-marker" style="left: 25%"></div>
-          <div class="level-marker" style="left: 50%"></div>
-          <div class="level-marker" style="left: 75%"></div>
-          <div class="level-marker" style="left: 100%"></div>
+  <main class="flex-grow flex flex-col items-center justify-start mt-12 px-4">
+    <div class="w-full max-w-5xl mx-auto">
+
+      <!-- Progress Indicator -->
+      <section class="mb-8">
+        <div class="relative h-4 bg-gray-200 rounded-full overflow-hidden">
+          <div id="level-progress" class="absolute h-full bg-blue-500 transition-all duration-300 ease-in-out"
+            style="width: 0%"></div>
+          <!-- Level markers -->
+          <!-- <div class="absolute top-1/2 transform -translate-y-1/2 w-full flex justify-between text-xs text-gray-600">
+            <span class="level-marker active">●</span>
+            <span class="level-marker">●</span>
+            <span class="level-marker">●</span>
+            <span class="level-marker">●</span>
+            <span class="level-marker">●</span>
+          </div> -->
         </div>
-      </div>
-      <!-- Text display area -->
-      <div class="bg-white rounded-lg shadow-sm p-4 text-display-container">
-        <div id="text-display" class="typing-text text-xl leading-relaxed text-gray-700">Helllooo</div>
+      </section>
+
+      <input id="hidden-input" autofocus type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+        class="absolute opacity-0 pointer-events-none" />
+
+      <!-- Typing Area / Text Display -->
+      <section class="bg-white rounded-lg shadow p-6 mb-8 h-42 flex flex-col">
+        <div id="text-display" class="text-xl self-center font-medium text-gray-800 leading-relaxed">
+
+        </div>
         <!-- Progress bar -->
-        <div class="progress-bar mb-6">
-          <div id="progress-fill" class="progress-fill bg-primary" style="width: 0%"></div>
+        <div class="mt-20 h-2 bg-gray-200 rounded-full overflow-hidden">
+          <div id="progress-fill" class="h-full bg-green-500 transition-all duration-300 ease-in-out" style="width: 0%">
+          </div>
         </div>
-      </div>
+      </section>
+
       <!-- Keyboard -->
-      <div class="keyboard-container mx-auto">
+      <section class="keyboard-container space-y-2">
         <!-- Row 1 -->
-        <div class="flex justify-center gap-1 mb-1">
-          <div class="key flex items-center justify-center" data-key="Backquote">`</div>
-          <div class="key flex items-center justify-center" data-key="Digit1">1</div>
-          <div class="key flex items-center justify-center" data-key="Digit2">2</div>
-          <div class="key flex items-center justify-center" data-key="Digit3">3</div>
-          <div class="key flex items-center justify-center" data-key="Digit4">4</div>
-          <div class="key flex items-center justify-center" data-key="Digit5">5</div>
-          <div class="key flex items-center justify-center" data-key="Digit6">6</div>
-          <div class="key flex items-center justify-center" data-key="Digit7">7</div>
-          <div class="key flex items-center justify-center" data-key="Digit8">8</div>
-          <div class="key flex items-center justify-center" data-key="Digit9">9</div>
-          <div class="key flex items-center justify-center" data-key="Digit0">0</div>
-          <div class="key flex items-center justify-center" data-key="Minus">-</div>
-          <div class="key flex items-center justify-center" data-key="Equal">=</div>
-          <div class="key key-wide flex items-center justify-center px-3" data-key="Backspace">⌫</div>
+        <div class="flex justify-center gap-1">
+          <div class="key" data-key="Backquote">`</div>
+          <div class="key" data-key="Digit1">1</div>
+          <div class="key" data-key="Digit2">2</div>
+          <div class="key" data-key="Digit3">3</div>
+          <div class="key" data-key="Digit4">4</div>
+          <div class="key" data-key="Digit5">5</div>
+          <div class="key" data-key="Digit6">6</div>
+          <div class="key" data-key="Digit7">7</div>
+          <div class="key" data-key="Digit8">8</div>
+          <div class="key" data-key="Digit9">9</div>
+          <div class="key" data-key="Digit0">0</div>
+          <div class="key" data-key="Minus">-</div>
+          <div class="key" data-key="Equal">=</div>
+          <div class="key key-wide px-3" data-key="Backspace">⌫</div>
         </div>
+
         <!-- Row 2 -->
-        <div class="flex justify-center gap-1 mb-1">
-          <div class="key key-wide flex items-center justify-center px-3" data-key="Tab">Tab</div>
-          <div class="key flex items-center justify-center" data-key="KeyQ">Q</div>
-          <div class="key flex items-center justify-center" data-key="KeyW">W</div>
-          <div class="key flex items-center justify-center" data-key="KeyE">E</div>
-          <div class="key flex items-center justify-center" data-key="KeyR">R</div>
-          <div class="key flex items-center justify-center" data-key="KeyT">T</div>
-          <div class="key flex items-center justify-center" data-key="KeyY">Y</div>
-          <div class="key flex items-center justify-center" data-key="KeyU">U</div>
-          <div class="key flex items-center justify-center" data-key="KeyI">I</div>
-          <div class="key flex items-center justify-center" data-key="KeyO">O</div>
-          <div class="key flex items-center justify-center" data-key="KeyP">P</div>
-          <div class="key flex items-center justify-center" data-key="BracketLeft">[</div>
-          <div class="key flex items-center justify-center" data-key="BracketRight">]</div>
-          <div class="key flex items-center justify-center" data-key="Backslash">\</div>
+        <div class="flex justify-center gap-1">
+          <div class="key key-wide px-3" data-key="Tab">Tab</div>
+          <div class="key" data-key="KeyQ">Q</div>
+          <div class="key" data-key="KeyW">W</div>
+          <div class="key" data-key="KeyE">E</div>
+          <div class="key" data-key="KeyR">R</div>
+          <div class="key" data-key="KeyT">T</div>
+          <div class="key" data-key="KeyY">Y</div>
+          <div class="key" data-key="KeyU">U</div>
+          <div class="key" data-key="KeyI">I</div>
+          <div class="key" data-key="KeyO">O</div>
+          <div class="key" data-key="KeyP">P</div>
+          <div class="key" data-key="BracketLeft">[</div>
+          <div class="key" data-key="BracketRight">]</div>
+          <div class="key" data-key="Backslash">\</div>
         </div>
+
         <!-- Row 3 -->
-        <div class="flex justify-center gap-1 mb-1">
-          <div class="key key-wide flex items-center justify-center px-3" data-key="CapsLock">Caps</div>
-          <div class="key flex items-center justify-center" data-key="KeyA">A</div>
-          <div class="key flex items-center justify-center" data-key="KeyS">S</div>
-          <div class="key flex items-center justify-center" data-key="KeyD">D</div>
-          <div class="key flex items-center justify-center" data-key="KeyF">F</div>
-          <div class="key flex items-center justify-center" data-key="KeyG">G</div>
-          <div class="key flex items-center justify-center" data-key="KeyH">H</div>
-          <div class="key flex items-center justify-center" data-key="KeyJ">J</div>
-          <div class="key flex items-center justify-center" data-key="KeyK">K</div>
-          <div class="key flex items-center justify-center" data-key="KeyL">L</div>
-          <div class="key flex items-center justify-center" data-key="Semicolon">;</div>
-          <div class="key flex items-center justify-center" data-key="Quote">'</div>
-          <div class="key key-wide flex items-center justify-center px-3" data-key="Enter">Enter</div>
+        <div class="flex justify-center gap-1">
+          <div class="key key-wide px-3" data-key="CapsLock">Caps</div>
+          <div class="key" data-key="KeyA">A</div>
+          <div class="key" data-key="KeyS">S</div>
+          <div class="key" data-key="KeyD">D</div>
+          <div class="key" data-key="KeyF">F</div>
+          <div class="key" data-key="KeyG">G</div>
+          <div class="key" data-key="KeyH">H</div>
+          <div class="key" data-key="KeyJ">J</div>
+          <div class="key" data-key="KeyK">K</div>
+          <div class="key" data-key="KeyL">L</div>
+          <div class="key" data-key="Semicolon">;</div>
+          <div class="key" data-key="Quote">'</div>
+          <div class="key key-wide px-3" data-key="Enter">Enter</div>
         </div>
 
         <!-- Row 4 -->
-        <div class="flex justify-center gap-1 mb-1">
-          <div class="key key-wide flex items-center justify-center px-3" data-key="ShiftLeft">Shift</div>
-          <div class="key flex items-center justify-center" data-key="KeyZ">Z</div>
-          <div class="key flex items-center justify-center" data-key="KeyX">X</div>
-          <div class="key flex items-center justify-center" data-key="KeyC">C</div>
-          <div class="key flex items-center justify-center" data-key="KeyV">V</div>
-          <div class="key flex items-center justify-center" data-key="KeyB">B</div>
-          <div class="key flex items-center justify-center" data-key="KeyN">N</div>
-          <div class="key flex items-center justify-center" data-key="KeyM">M</div>
-          <div class="key flex items-center justify-center" data-key="Comma">,</div>
-          <div class="key flex items-center justify-center" data-key="Period">.</div>
-          <div class="key flex items-center justify-center" data-key="Slash">/</div>
-          <div class="key key-wide flex items-center justify-center px-3" data-key="ShiftRight">Shift</div>
-        </div>
-        <!-- Row 5 -->
         <div class="flex justify-center gap-1">
-          <div class="key key-wide flex items-center justify-center px-2" data-key="ControlLeft">Ctrl</div>
-          <div class="key key-wide flex items-center justify-center px-2" data-key="MetaLeft">Win</div>
-          <div class="key key-wide flex items-center justify-center px-2" data-key="AltLeft">Alt</div>
-          <div class="key key-space flex items-center justify-center" data-key="Space">Space</div>
-          <div class="key key-wide flex items-center justify-center px-2" data-key="AltRight">Alt</div>
-          <div class="key key-wide flex items-center justify-center px-2" data-key="MetaRight">Win</div>
-          <div class="key key-wide flex items-center justify-center px-2" data-key="ControlRight">Ctrl</div>
+          <div class="key key-wide px-3" data-key="ShiftLeft">Shift</div>
+          <div class="key" data-key="KeyZ">Z</div>
+          <div class="key" data-key="KeyX">X</div>
+          <div class="key" data-key="KeyC">C</div>
+          <div class="key" data-key="KeyV">V</div>
+          <div class="key" data-key="KeyB">B</div>
+          <div class="key" data-key="KeyN">N</div>
+          <div class="key" data-key="KeyM">M</div>
+          <div class="key" data-key="Comma">,</div>
+          <div class="key" data-key="Period">.</div>
+          <div class="key" data-key="Slash">/</div>
+          <div class="key key-wide px-3" data-key="ShiftRight">Shift</div>
         </div>
 
-      </div>
+        <!-- Row 5 -->
+        <div class="flex justify-center gap-1">
+          <div class="key key-wide px-2" data-key="ControlLeft">Ctrl</div>
+          <div class="key key-wide px-2" data-key="MetaLeft">Win</div>
+          <div class="key key-wide px-2" data-key="AltLeft">Alt</div>
+          <div class="key key-space flex-grow text-center" data-key="Space">Space</div>
+          <div class="key key-wide px-2" data-key="AltRight">Alt</div>
+          <div class="key key-wide px-2" data-key="MetaRight">Win</div>
+          <div class="key key-wide px-2" data-key="ControlRight">Ctrl</div>
+        </div>
+      </section>
     </div>
   </main>
+
 
   <!--Intro page-->
   <div id="intro-page" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -524,7 +540,7 @@
   </div>
 
   <!-- <script src="ajax.js"></script> -->
-  <script type="module" src="js/index.js"></script>
+  <script type="module" src="js/new_index.js"></script>
 </body>
 
 </html>

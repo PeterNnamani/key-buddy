@@ -55,76 +55,51 @@ body {
 
 
 
-.text-display-container {
+/* .text-display-container {
   margin-top: 0.25rem;
-  /* Very tiny space between navbar and display area */
   margin-bottom: 2em;
-  /* Space between display and keyboard remains */
-  /* justify-content:  !important; */
-}
+} */
 
 
-.typing-text {
+/* .typing-text {
   height: 150px;
-  /* display: flex; */
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
   overflow: hidden;
-  /* prevent scrollbar for animation */
   position: relative;
-  /* allow absolute children */
   display: block;
   font-size: 12px;
-  /* Even larger */
-}
+} */
 
 
-.keyboard-container {
+/* .keyboard-container {
   max-width: 100%;
-  /* Allow the keyboard to take up the full width */
   padding: 0 8px;
-  /* Add some padding for spacing */
-}
+} */
 
 .key {
   flex: 1 1 auto;
-  /* Allow keys to stretch and take up more space */
-
-  /* Set a minimum width for each key */
   height: 40px;
-  /* Adjust the height for better proportions */
+  width: 40px;
   border: 1px solid #ddd;
-  /* Add a border for better visibility */
   border-radius: 3px;
-  /* Slightly round the corners */
   background-color: #f9f9f9;
-  /* Light background color */
   text-align: center;
   line-height: 38px;
-  /* Center text vertically for 38px height */
   font-size: 14px;
-  /* Even larger */
   font-weight: 500;
   color: #333;
-  /* Darker text color */
   margin: 1px;
-  /* Add spacing between keys */
   transition: all 0.15s ease;
   user-select: none;
   padding: 0 2px;
 }
 
-/* Reduce width of backspace button */
-
-
-/* Properly style the number 2 button */
-
 
 .key-space {
   flex: 3 1 auto;
-  /* Make the spacebar significantly wider */
 }
 
 .key-pressed {
@@ -168,7 +143,6 @@ body {
 
 .word {
   font-size: 14px;
-  /* Even larger */
   display: inline-block;
   margin-right: 4px;
   transition: color 0.2s ease;
@@ -190,7 +164,6 @@ body {
   color: #E74C3C;
 }
 
-/* Add styles for per-letter feedback and strikethrough */
 .word span.text-green-600 {
   color: #2ecc71 !important;
   font-weight: bold;
