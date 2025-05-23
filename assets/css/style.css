@@ -206,6 +206,7 @@ body {
 .scroll-text-vertical {
   position: absolute;
   bottom: 0;
+  left: 50%;
   transform: translateX(-50%);
   animation: scrollTextVertical 6s linear forwards;
   white-space: nowrap;
@@ -213,10 +214,10 @@ body {
 
 @keyframes scrollTextVertical {
   0% {
-    transform: translateY(100%);
+    top: 100%;
   }
   100% {
-    transform: translateY(-100%);
+    top: -100%;
   }
 }
 
@@ -241,24 +242,17 @@ body {
 /* Style for each falling word */
 .falling-word {
   position: absolute;
-  font-size: 24px;
-  color: #fff;
   top: 0;
-  left: 0;
+  left: 50%;
+  transform: translateX(-50%);
   white-space: nowrap;
-  animation: fall 5s linear infinite;
 }
 
 /* Animation for falling effect */
 @keyframes fall {
-  0% {
-      transform: translateY(0);
-  }
-  100% {
-      transform: translateY(100vh); /* Adjust based on container height */
-  }
+  from { top: 0; }
+  to { top: 90%; }
 }
-
 
 span.word {
   display: inline-block;
