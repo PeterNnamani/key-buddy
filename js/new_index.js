@@ -48,16 +48,15 @@ const gameStats = {
 const clamp = (val, min, max) => Math.max(min, Math.min(max, val));
 
 startGameBtn.addEventListener('click', () => {
-    console.log('Start game ');
     introPage.classList.add('hidden');
-    showLeaderboard();
-    // levelIndex = 0;
-    // gameStats.levels = [];
-    // gameStats.totalScore = 0;
-    // gameStats.totalTime = 0;
-    // gameStats.overallAccuracy = 100;
+   // showLeaderboard();
+    levelIndex = 0;
+    gameStats.levels = [];
+    gameStats.totalScore = 0;
+    gameStats.totalTime = 0;
+    gameStats.overallAccuracy = 100;
 
-    // startLevelWithCountdown(levelIndex);
+    startLevelWithCountdown(levelIndex);
 });
 
 document.getElementById('play-again-leaderboard').addEventListener('click', () => {
@@ -68,9 +67,6 @@ nextLevelButton.addEventListener('click', () => {
     const hasRegistered = localStorage.getItem('has-registered') === 'true';
     levelCompletionModal.classList.add('hidden');
     levelIndex++;
-
-    console.log('Level index ', levelIndex);
-    console.log('has registered ', hasRegistered);
 
     if (levelIndex === 3 && !hasRegistered) {
         showRegistrationModal({
@@ -94,8 +90,6 @@ function startLevelWithCountdown(levelIdx) {
 }
 
 function startLevel(index) {
-    console.log('Level index ', index);
-
     levelIndex = index;
     level = levels[index];
 
@@ -387,7 +381,7 @@ function renderSentenceVertical(sentence) {
 
     const scrollingSpan = document.createElement('div');
     scrollingSpan.classList.add('scroll-text-vertical');
-    scrollingSpan.style.animationDuration = '20s';
+    scrollingSpan.style.animationDuration = '23s';
 
     sentence.split('').forEach((char, index) => {
         const span = document.createElement('span');
@@ -541,6 +535,7 @@ function endLevel() {
         Math.min(Math.round((correctChars / totalTypedChars) * 100), 100);
 
     const { rawScore, normalizedScore } = calculateNormalizedScore(speedWPM, accuracy);
+    
 
     // Save level-specific stats
     const levelStats = {
@@ -553,7 +548,16 @@ function endLevel() {
         totalKeystrokes: totalTypedChars,
     };
 
-    updateStats(levelStats);
+    gameStats.levels[levelIndex] = levelStats;
+
+    // Accumulate total stats
+    gameStats.totalScore += normalizedScore;
+    gameStats.totalTime += timeTaken;
+    gameStats.speed += speedWPM;
+
+    // Recalculate average accuracy
+    const totalAccuracySum = gameStats.levels.reduce((sum, l) => sum + l.accuracy, 0);
+    gameStats.overallAccuracy = Math.round(totalAccuracySum / gameStats.levels.length);
 
     // Show stats in modal
     if (levelIndex === 4) {
@@ -576,18 +580,6 @@ function calculateNormalizedScore(speedWPM, accuracy, maxLevelScore = 20, idealW
     };
 }
 
-function updateStats(levelStats) {
-    gameStats.levels[levelIndex] = levelStats;
-
-    // Accumulate total stats
-    gameStats.totalScore += normalizedScore;
-    gameStats.totalTime += timeTaken;
-    gameStats.speed = speedWPM;
-
-    // Recalculate average accuracy
-    const totalAccuracySum = gameStats.levels.reduce((sum, l) => sum + l.accuracy, 0);
-    gameStats.overallAccuracy = Math.round(totalAccuracySum / gameStats.levels.length);
-}
 
 function showLevelCompletionModal(score, accuracy, speedWPM, timeTaken) {
     levelCompletionModal.style.display = 'flex';
@@ -617,8 +609,6 @@ function showFinalResults() {
     document.getElementById('play-again').addEventListener('click', () => {
         location.reload();
     });
-    // const closeLeaderboardButton = document.getElementById('close-leaderboard');
-    // const backToResultsButton = document.getElementById('back-to-results');
 }
 
 function resetGameUI() {
@@ -651,10 +641,12 @@ function cleanupLevel4() {
 async function saveResultToServer() {
     const userData = JSON.parse(localStorage.getItem('user-data') || '{}');
 
+    console.log('Updated user data:', userData);
+
     userData.score = gameStats.totalScore > userData.score ? gameStats.totalScore : userData.score;
     userData.speed = gameStats.speed > userData.speed ? gameStats.speed : userData.speed;
     userData.accuracy = gameStats.overallAccuracy > userData.accuracy ? gameStats.overallAccuracy : userData.accuracy;
-    userData.time = gameStats.totalTime > userData.time ? gameStats.totalTime : userData.time;
+    userData.time = gameStats.totalTime > userData.time ? gameStats.totalTime.toFixed(2) : userData.time;
 
     console.log('Updated user data:', userData);
     // Save user data to local storage

@@ -75,32 +75,32 @@
   <main class="flex-grow flex flex-col items-center justify-start mt-20 px-4">
     <div class="w-full max-w-5xl mx-auto">
 
-      <input id="hidden-input" autofocus type="text" autocomplete="off" autocorrect="off" 
-            autocapitalize="off" spellcheck="false"
-        class="absolute opacity-0 pointer-events-none" />
+      <input id="hidden-input" autofocus type="text" autocomplete="off" autocorrect="off" autocapitalize="off"
+        spellcheck="false" class="absolute opacity-0 pointer-events-none" />
 
-        <input id="hidden-input-2" autofocus type="text" autocomplete="off" autocorrect="off" 
-            autocapitalize="off" spellcheck="false"
-        class="absolute opacity-0 pointer-events-none" />
+      <input id="hidden-input-2" autofocus type="text" autocomplete="off" autocorrect="off" autocapitalize="off"
+        spellcheck="false" class="absolute opacity-0 pointer-events-none" />
 
-        <input id="hidden-input-3" autofocus type="text" autocomplete="off" autocorrect="off" 
-            autocapitalize="off" spellcheck="false"
-        class="absolute opacity-0 pointer-events-none" />
+      <input id="hidden-input-3" autofocus type="text" autocomplete="off" autocorrect="off" autocapitalize="off"
+        spellcheck="false" class="absolute opacity-0 pointer-events-none" />
       <!-- Typing Area / Text Display -->
       <section class="bg-white rounded-lg shadow p-6 mb-8 h-48 flex flex-col">
 
-        <div id="wrapped-text-display" class="flex-1 overflow-y-auto text-xl font-medium text-gray-800 leading-relaxed break-words hidden">
+        <div id="wrapped-text-display"
+          class="flex-1 overflow-y-auto text-xl font-medium text-gray-800 leading-relaxed break-words hidden">
           <!-- Text will be inserted here for Level 1 -->
         </div>
-        <div id="text-display" class=" flex-1 flex justify-center items-center relative overflow-hidden flex-1 text-xl font-medium text-gray-800 leading-relaxed">
+        <div id="text-display"
+          class=" flex-1 flex justify-center items-center relative overflow-hidden flex-1 text-xl font-medium text-gray-800 leading-relaxed">
         </div>
-      
+
         <!-- Progress bar -->
         <div class="h-2 bg-gray-200 rounded-full overflow-hidden mt-4">
-          <div id="progress-fill" class="h-full bg-green-500 transition-all duration-300 ease-in-out" style="width: 0%"></div>
+          <div id="progress-fill" class="h-full bg-green-500 transition-all duration-300 ease-in-out" style="width: 0%">
+          </div>
         </div>
       </section>
-      
+
 
       <!-- Keyboard -->
       <section class="keyboard-container space-y-2">
@@ -412,7 +412,7 @@
   <!-- Leaderboard modal (hidden by default) -->
   <div id="leaderboard-modal" class="fixed inset-0 flex items-center justify-center z-50 hidden bg-white">
     <div class="w-full h-full flex flex-col">
-      
+
       <!-- Sticky Header -->
       <div class="sticky top-0 z-2 bg-white p-2 shadow-sm flex justify-between items-center">
         <h2 class="text-3xl font-bold text-gray-800">Leaderboard</h2>
@@ -426,12 +426,12 @@
           </button> -->
         </div>
       </div>
-  
+
       <!-- Scrollable Content -->
       <div class="p-6 overflow-y-auto">
         <!-- Cards -->
         <div id="leaderboard-cards" class="flex flex-wrap justify-center gap-6 my-6"></div>
-  
+
         <!-- Table -->
         <table class="leaderboard-table-modern mt-4 w-full">
           <thead>
@@ -450,7 +450,6 @@
       </div>
     </div>
   </div>
-  
 
   <!-- Registration Modal (hidden by default) -->
   <div id="registration-modal" class="fixed inset-0 flex items-center justify-center z-50 hidden">

@@ -54,7 +54,7 @@ const levels = [
             "The cat chased the red laser light.",
             "The clock ticks loudly at midnight."
         ],
-        timeLimit: 20,
+        timeLimit: 15,
         requiredSpeed: 30,
         weight: 20
     },
