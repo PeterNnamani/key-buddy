@@ -13,8 +13,9 @@ const levels = [
             "The dog barked excitedly when it saw the mailman approach the house, wagging its tail in joy.",
             "During the summer, we visited the beach almost every day to swim, build sandcastles, and collect seashells."
         ],
-        timeLimit: 75,
+        timeLimit: 30,
         requiredSpeed: 20,
+        weight: 10
     },
     {
         // Level 2: Horizontal Scrolling Word-by-Word
@@ -30,59 +31,78 @@ const levels = [
             "He drew a comic book with superheroes who could fly, become invisible, and shoot laser beams from their eyes.",
             "At the end of the race, everyone cheered as the last runner crossed the finish line with a big smile."
         ],
-        timeLimit: 80,
+        timeLimit: 25,
         requiredSpeed: 25,
+        weight: 15
     },
     {
         // Level 3: Bottom-to-Top Moving Words
         words: [
-            "With determination and daily effort, she learned to ride a bicycle without training wheels by the end of the week.",
-            "The classroom was filled with laughter as students worked together on an art project using paint and recycled materials.",
-            "At night, the city glows with lights from cars, buildings, and signs, creating a magical view from the rooftop.",
-            "They built a cardboard rocket ship and pretended to explore distant planets filled with aliens and treasure.",
-            "Each page of the mystery book made me want to read more and find out who had stolen the ancient gem.",
-            "The scientist mixed colorful chemicals in test tubes, observing how they bubbled, fizzed, and changed colors.",
-            "We spent the afternoon creating a scavenger hunt that led to a hidden box of candy buried under the old tree.",
-            "The magician pulled a rabbit out of his hat and amazed the audience with disappearing cards and floating objects.",
-            "As the snow fell, we built a snowman, gave him a scarf and hat, and laughed when a bird landed on his nose.",
-            "With teamwork, courage, and a map, the explorers reached the secret cave and discovered glowing crystals inside."
+            "Reading is fun when you find a good book.",
+            "We discovered a new planet in the game.",
+            "My robot toy lights up and talks too.",
+            "She built a tall tower with blocks.",
+            "The rocket zoomed into the sky quickly.",
+            "We saw dolphins jumping out of the water.",
+            "I painted a sunset with orange and red.",
+            "The squirrel hid a nut in the ground.",
+            "My backpack is full of books and snacks.",
+            "He found a shiny coin on the road.",
+            "The garden smells fresh after the rain.",
+            "We played tag until the sun went down.",
+            "I like puzzles with lots of tiny pieces.",
+            "The cat chased the red laser light.",
+            "The clock ticks loudly at midnight."
         ],
-        timeLimit: 85,
+        timeLimit: 20,
         requiredSpeed: 30,
+        weight: 20
     },
     {
         // Level 4: Appearing and Disappearing Words (Memory & Speed Challenge)
         words: [
-            "Even when things seem difficult, remember that every challenge helps you become stronger and more confident.",
-            "Kindness spreads quickly when you smile at someone, help a friend, or speak with encouragement and respect.",
-            "Every dream starts with one small step forward, followed by another, until you arrive at your big goal.",
-            "Courage means doing what’s right, even if it’s hard, and believing in yourself when others might doubt you.",
-            "You learn the most not when things are easy, but when you keep going despite obstacles in your way.",
-            "Listening carefully helps you understand others, solve problems, and become a better friend or teammate.",
-            "Never be afraid to ask questions, because curiosity is the first step toward discovering something amazing.",
-            "Teamwork means working together, sharing ideas, and trusting each other to reach a common goal.",
-            "When you forgive someone, you set your heart free from anger and make room for peace and understanding.",
-            "Believing in yourself is the first step to unlocking your true potential and achieving great things."
+            "Always be kind to others and share what you have.",
+            "Laughter is the best medicine for a sad heart.",
+            "Your dreams are valid no matter your age.",
+            "We grow when we learn from our mistakes.",
+            "Courage means trying even when it's hard.",
+            "Teamwork makes everything easier and more fun.",
+            "Helping friends is a great way to show love.",
+            "Confidence is believing in what you can do.",
+            "Be honest, even when it's not easy.",
+            "Every small step leads to a big change.",
+            "Good manners are always appreciated by others.",
+            "Patience helps us make better decisions.",
+            "Practice every day to improve your skills.",
+            "Smiling can brighten someone’s whole day.",
+            "Listening is just as important as talking."
         ],
-        timeLimit: 90,
+        timeLimit: 15,
         requiredSpeed: 35,
+        weight: 25
     },
     {
         // Level 5: Falling Words (Fast reaction test)
         words: [
-            "Sometimes you have to try many times before you succeed, and that’s okay because every attempt teaches you something.",
-            "The best leaders are those who listen, care about others, and help everyone do their best together.",
-            "Your thoughts shape your future, so think big, stay positive, and never doubt your ability to grow.",
-            "Be the reason someone smiles today by showing kindness, sharing joy, or simply being there when they need you.",
-            "Great things take time, so don’t rush the journey—focus on the process and celebrate every small win.",
-            "Mistakes don’t mean failure; they’re proof that you’re learning, growing, and moving closer to your goals.",
-            "When you believe in your dreams, even the biggest mountains seem smaller and easier to climb.",
-            "Every act of kindness, no matter how small, creates a ripple that spreads far beyond what you can see.",
-            "Let go of doubt, trust your path, and take bold steps toward the life you imagine for yourself.",
-            "You are capable of amazing things when you stay focused, work hard, and never give up on yourself."
+            "Success is built on daily good habits.",
+            "You are braver than you think you are.",
+            "Stay curious and keep asking questions.",
+            "Even superheroes need help sometimes.",
+            "Don't give up, greatness takes time.",
+            "Be the reason someone smiles today.",
+            "Mistakes help us get better each time.",
+            "You can do amazing things with effort.",
+            "Learning is the key to every door.",
+            "Your kindness makes the world brighter.",
+            "A small act of kindness matters a lot.",
+            "Your attitude shapes your future path.",
+            "Being different makes you special.",
+            "Effort always beats instant talent.",
+            "Trust yourself and take the leap."
         ],
-        timeLimit: 95,
+        timeLimit: 10,
         requiredSpeed: 40,
+        weight: 30
     }
 ];
 

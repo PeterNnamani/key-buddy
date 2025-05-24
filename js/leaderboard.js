@@ -1,4 +1,4 @@
-import makeRequest from "./request";
+import makeRequest from "./request.js";
 
 export default function showLeaderboard(){
     makeRequest({

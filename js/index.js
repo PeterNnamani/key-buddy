@@ -46,7 +46,6 @@ document.addEventListener('DOMContentLoaded', () => {
   let totalTypedChars = 0;
   let averageWPM = 0;
 
-  let averageWPM = 0;
 
   const alreadyRegistered = () => {
     return localStorage.getItem('has-registered') === 'true';

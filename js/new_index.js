@@ -8,6 +8,7 @@ import showLeaderboard from './leaderboard.js';
 
 // Game elements
 const textDisplay = document.getElementById('text-display');
+const wrappedTextDisplay = document.getElementById('wrapped-text-display');
 const progressFill = document.getElementById('progress-fill');
 const currentLevelElement = document.getElementById('current-level');
 const timerElement = document.getElementById('timer');
@@ -18,6 +19,8 @@ const levelCompletionModal = document.getElementById('level-completion-modal');
 const leaderboardModal = document.getElementById('leaderboard-modal');
 const nextLevelButton = document.getElementById('next-level-button');
 const typingInput = document.getElementById('hidden-input');
+const typingInput2 = document.getElementById('hidden-input-2');
+const typingInput3 = document.getElementById('hidden-input-3');
 const startGameBtn = document.getElementById('start-game');
 const introPage = document.getElementById('intro-page');
 const keyboard = document.querySelector(".keyboard-container");
@@ -32,6 +35,7 @@ let timerInterval = null;
 let correctChars = 0;
 let currentIndex = 0;
 let totalTypedChars = 0;
+let level4Timeouts = [];
 
 const gameStats = {
     levels: [],
@@ -41,6 +45,7 @@ const gameStats = {
 };
 
 startGameBtn.addEventListener('click', () => {
+    console.log('Start game ');
     introPage.classList.add('hidden');
     levelIndex = 0;
     gameStats.levels = [];
@@ -52,10 +57,14 @@ startGameBtn.addEventListener('click', () => {
 });
 
 nextLevelButton.addEventListener('click', () => {
+    const hasRegistered = localStorage.getItem('has-registered') === 'true';
     levelCompletionModal.classList.add('hidden');
     levelIndex++;
 
-    if (levelIndex === 3) {
+    console.log('Level index ', levelIndex);
+    console.log('has registered ', hasRegistered);
+
+    if (levelIndex === 3 && !hasRegistered) {
         showRegistrationModal({
             saveUserData,
             makeRequest,
@@ -66,62 +75,103 @@ nextLevelButton.addEventListener('click', () => {
     } else if (levelIndex < levels.length) {
         startLevelWithCountdown(levelIndex);
     } else {
-        makeRequest({
 
-        });
+        // makeRequest({
+
+        // });
     }
 });
 
 function startLevelWithCountdown(levelIdx) {
+    levelCompletionModal.style.display = 'none';
+
     showCountdownAnimation(() => {
         startLevel(levelIdx);
     });
 }
 
 function startLevel(index) {
+    console.log('Level index ', index);
+
     levelIndex = index;
     level = levels[index];
 
+    if (index === 0) {
+        textDisplay.classList.add('hidden');
+        wrappedTextDisplay.classList.remove('hidden');
+    } else {
+        textDisplay.classList.remove('hidden');
+        wrappedTextDisplay.classList.add('hidden');
+    }
+
     resetGameUI();
-    currentSentence = getRandomSentence(index);
+
+    enableInput(typingInput);
+
     correctChars = 0;
     totalTypedChars = 0;
     startTime = null;
 
-    typingInput.disabled = false;
-    typingInput.value = '';
-    typingInput.focus();
+    currentSentence = getRandomSentence(index);
 
     currentLevelElement.textContent = (index + 1).toString();
-    timerElement.textContent = `${level.timeLimit}s`;
+    timerElement.textContent = `${level.timeLimit}`;
 
     // Setup level-specific render and logic
     switch (index) {
         case 0:
-            renderSentence(currentSentence);
+            startLevel1(currentSentence);
+            return;
         case 1:
-            renderSentence2(currentSentence);
+            startLevel2(currentSentence);
+            return;
         case 2:
-            renderSentenceVertical(currentSentence);
+            startLevel3(currentSentence);
+            return;
         case 3:
             startLevel4(currentSentence);
+            return;
         case 4:
             startLevel5(currentSentence);
+            return;
     }
+}
+
+function startLevel1(currentSentence) {
+    renderSentence(currentSentence);
+    startTimer();
+}
+
+function startLevel2(currentSentence) {
+    renderSentence2(currentSentence);
 
     let timeLeft = level.timeLimit;
     timerInterval = setInterval(() => {
         timeLeft--;
-        timerElement.textContent = `${timeLeft}s`;
+        timerElement.textContent = `${timeLeft}`;
         if (timeLeft <= 0) {
-            if (levelIndex === 1) stopScrolling();
-            clearInterval(timerInterval);
+            stopScrolling('scroll-text'); // Pause scroll
+            endLevel();
+        }
+    }, 1000);
+}
+
+function startLevel3(currentSentence) {
+    renderSentenceVertical(currentSentence);
+    let timeLeft = level.timeLimit;
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        timerElement.textContent = `${timeLeft}`;
+        if (timeLeft <= 0) {
+            stopScrolling('scroll-text-vertical'); // Pause scroll
             endLevel();
         }
     }, 1000);
 }
 
 function startLevel4(currentSentence) {
+    enableInput(typingInput3);
+
     const words = currentSentence.split(' ');
     let currentWordIndex = 0;
 
@@ -135,7 +185,7 @@ function startLevel4(currentSentence) {
         }
 
         currentWord = words[index];
-        typingInput.value = '';
+        typingInput3.value = '';
         textDisplay.innerHTML = '';
 
         const wordSpanContainer = document.createElement('span');
@@ -155,25 +205,30 @@ function startLevel4(currentSentence) {
         textDisplay.appendChild(wordSpanContainer);
 
         // Fade out and move to next word regardless of user input
-        setTimeout(() => {
+        const fadeOutTimeout = setTimeout(() => {
             wordSpanContainer.classList.remove('fade-in');
             wordSpanContainer.classList.add('fade-out');
 
             // Wait for fade to complete
-            setTimeout(() => {
+            const nextWordTimeout = setTimeout(() => {
                 currentWordIndex++;
                 progressFill.style.width = `${(currentWordIndex / words.length) * 100}%`;
                 showWord(currentWordIndex);
             }, 500); // Match CSS fade-out duration
+
+            level4Timeouts.push(nextWordTimeout);
         }, 5000); // Show word for 5s
+
+        level4Timeouts.push(fadeOutTimeout);
     }
 
     showWord(currentWordIndex);
+    startTimer();
 
-    typingInput.oninput = () => {
+    typingInput3.oninput = () => {
         if (!startTime) startTime = new Date();
 
-        const userInput = typingInput.value;
+        const userInput = typingInput3.value;
         totalTypedChars++;
         correctChars = 0;
 
@@ -203,35 +258,31 @@ function startLevel4(currentSentence) {
     };
 }
 
-
 function startLevel5(currentSentence) {
+    enableInput(typingInput2);
+
     const words = currentSentence.split(' ');
     let currentWordIndex = 0;
 
-    let currentWord = '';
-    let spans = [];
+    let activeSpans = [];
 
+    let totalTypedChars = 0;
+    let correctChars = 0;
+    let startTime = null;
+
+    // Render and drop one word every 4 seconds
     function renderFallingWord(index) {
-        if (index >= words.length) {
-            clearInterval(timerInterval);
-            clearInterval(fallingTimer);
-            endLevel();
-            return;
-        }
+        if (index >= words.length) return;
 
-        currentWord = words[index];
-        typingInput.value = ''; // Clear input early
-
-        // Remove any previous falling word immediately
-        textDisplay.innerHTML = '';
-
+        const word = words[index];
         const wordContainer = document.createElement('div');
         wordContainer.className = 'falling-word';
         wordContainer.style.animation = 'fall 5s linear forwards';
+        typingInput2.value = '';
 
-        spans = [];
+        const spans = [];
 
-        currentWord.split('').forEach((char, i) => {
+        word.split('').forEach((char, i) => {
             const span = document.createElement('span');
             span.textContent = char;
             span.setAttribute('data-index', i);
@@ -242,29 +293,39 @@ function startLevel5(currentSentence) {
 
         textDisplay.appendChild(wordContainer);
 
-        setTimeout(() => {
-            currentWordIndex++;
-            renderFallingWord(currentWordIndex);
-            progressFill.style.width = `${(currentWordIndex / words.length) * 100}%`;
-        }, 4000); // Move to next word regardless of input
+        activeSpans = spans;
     }
 
+    // Interval to drop each word every 4 seconds
+    const wordInterval = setInterval(() => {
+        if (currentWordIndex >= words.length) {
+            clearInterval(wordInterval);
+            clearInterval(timerInterval);
+            endLevel();
+            return;
+        }
 
-    renderFallingWord(currentWordIndex);
+        renderFallingWord(currentWordIndex);
+        currentWordIndex++;
+        progressFill.style.width = `${(currentWordIndex / words.length) * 100}%`;
+    }, 4000);
 
-    typingInput.oninput = () => {
+    // Typing input logic (validates only active word)
+    typingInput2.oninput = () => {
         if (!startTime) startTime = new Date();
 
-        const userInput = typingInput.value.trim();
+        const userInput = typingInput2.value.trim();
         totalTypedChars++;
 
-        spans.forEach((span, i) => {
+        activeSpans.forEach((span, i) => {
             const typedChar = userInput[i];
-            const expectedChar = currentWord[i];
+            const expectedChar = span.textContent;
 
             span.classList.remove('correct', 'incorrect');
 
-            if (typedChar == null) return;
+            if (typedChar == null) {
+                return;
+            }
 
             if (typedChar === expectedChar) {
                 span.classList.add('correct');
@@ -274,14 +335,40 @@ function startLevel5(currentSentence) {
             }
         });
 
-        const accuracy = totalTypedChars === 0 ? 100 : Math.min(Math.round((correctChars / totalTypedChars) * 100), 100);
+        const accuracy = totalTypedChars === 0
+            ? 100
+            : Math.min(Math.round((correctChars / totalTypedChars) * 100), 100);
         accuracyElement.textContent = `${accuracy}%`;
 
         const elapsedTime = (new Date() - startTime) / 1000;
-        const wordsTyped = currentWordIndex;
-        const speedWPM = elapsedTime > 0 ? Math.round((wordsTyped / elapsedTime) * 60) : 0;
+        const speedWPM = elapsedTime > 0
+            ? Math.round((currentWordIndex / elapsedTime) * 60)
+            : 0;
         typingSpeedElement.textContent = `${speedWPM} WPM`;
     };
+
+    // Timer countdown
+    let timeLeft = level.timeLimit;
+    const timerInterval = setInterval(() => {
+        timeLeft--;
+        timerElement.textContent = timeLeft;
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            clearInterval(wordInterval);
+            endLevel();
+        }
+    }, 1000);
+}
+
+function startTimer() {
+    let timeLeft = level.timeLimit;
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        timerElement.textContent = `${timeLeft}`;
+        if (timeLeft <= 0) {
+            endLevel();
+        }
+    }, 1000);
 }
 
 function getRandomSentence(index) {
@@ -313,7 +400,7 @@ function renderSentence2(sentence) {
 
     const scrollingSpan = document.createElement('div');
     scrollingSpan.classList.add('scroll-text');
-    scrollingSpan.style.animationDuration = '20s'; // You can adjust based on sentence length
+    scrollingSpan.style.animationDuration = '30s'; // You can adjust based on sentence length
 
     sentence.split('').forEach((char, index) => {
         const span = document.createElement('span');
@@ -327,29 +414,25 @@ function renderSentence2(sentence) {
 }
 
 function renderSentence(sentence) {
-    textDisplay.innerHTML = '';
+    wrappedTextDisplay.innerHTML = '';
     sentence.split('').forEach((char, index) => {
         const span = document.createElement('span');
         span.innerText = char;
         span.setAttribute('data-index', index);
         span.classList.add('word');
-        textDisplay.appendChild(span);
+        wrappedTextDisplay.appendChild(span);
     });
 }
 
 typingInput.addEventListener('input', () => {
     if (!startTime) startTime = new Date();
 
-    // LEVEL 4 behaves differently
-    if (currentLevelElement.textContent === '4' || currentLevelElement.textContent === '5') {
-        // Handle word-by-word input logic here
-        return;
-    }
-
     const userInput = typingInput.value;
     totalTypedChars = userInput.length;
 
-    const spans = textDisplay.querySelectorAll('span');
+    const spans = levelIndex === 0 ?
+        wrappedTextDisplay.querySelectorAll('span')
+        : textDisplay.querySelectorAll('span');
 
     correctChars = 0;
     spans.forEach((span, index) => {
@@ -381,8 +464,6 @@ typingInput.addEventListener('input', () => {
     highlightSuggestedKey();
 
 
-    scrollToSpan(currentIndex);
-
     // Update accuracy and speed
     const accuracy = userInput.length === 0 ? 100 : Math.round((correctChars / userInput.length) * 100);
     accuracyElement.textContent = `${accuracy}%`;
@@ -399,23 +480,8 @@ typingInput.addEventListener('input', () => {
     }
 });
 
-function scrollToSpan(index) {
-    const spans = textDisplay.querySelectorAll('span');
-    const container = document.getElementById("text-container");
-    const targetSpan = spans[index];
-
-    if (targetSpan) {
-        const spanOffset = targetSpan.offsetLeft;
-        const spanWidth = targetSpan.offsetWidth;
-        const containerWidth = container.offsetWidth;
-
-        const scrollPosition = spanOffset - containerWidth / 2 + spanWidth / 2;
-        container.scrollTo({ left: scrollPosition, behavior: 'smooth' });
-    }
-}
-
-function stopScrolling() {
-    const scrollSpan = document.querySelector('.scroll-text');
+function stopScrolling(elementId) {
+    const scrollSpan = document.querySelector(`.${elementId}`);
     if (scrollSpan) scrollSpan.style.animationPlayState = 'paused';
 }
 
@@ -455,7 +521,11 @@ document.addEventListener("keydown", (e) => {
 
 function endLevel() {
     clearInterval(timerInterval);
-    typingInput.disabled = true;
+    disableInput(typingInput);
+    disableInput(typingInput2);
+    disableInput(typingInput3);
+
+    if(levelIndex === 3) cleanupLevel4();
 
     const timeTaken = (new Date() - startTime) / 1000 || 0.01;
     // const wordsTyped = currentSentence.trim().split(/\s+/).length;
@@ -523,9 +593,27 @@ function showFinalResults() {
 
 function resetGameUI() {
     progressFill.style.width = '0%';
-    typingInput.value = '';
     accuracyElement.textContent = '100%';
     typingSpeedElement.textContent = '0 WPM';
     timerElement.textContent = `${levels[levelIndex].timeLimit} s`;
     textDisplay.innerHTML = '';
+    wrappedTextDisplay.innerHTML = '';
+}
+
+function enableInput(input) {
+    input.onpaste = (e) => e.preventDefault();
+    input.value = '';
+    input.disabled = false;
+    input.focus();
+}
+
+function disableInput(input) {
+    input.disabled = true;
+}
+
+function cleanupLevel4() {
+    level4Timeouts.forEach(clearTimeout);
+    level4Timeouts = [];
+    typingInput3.oninput = null;
+    textDisplay.classList.remove('fade-in', 'fade-out');
 }

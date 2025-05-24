@@ -117,6 +117,7 @@ body {
 
 .word {
   font-size: 14px;
+  font-family: "Poppins";
   display: inline-block;
   margin-right: 4px;
   transition: color 0.2s ease;
@@ -180,10 +181,9 @@ body {
 }
 
 #text-display {
-  overflow: hidden;          /* This clips the overflow */
-  position: relative;        /* Needed for proper animation context */
-  width: 100%;               /* Ensures it stays within the container */
-        /* Optional: height control if needed */
+  overflow: hidden;
+  position: relative; 
+  width: 100%;
 }
 
 @keyframes scrollText {
@@ -250,8 +250,8 @@ body {
 
 /* Animation for falling effect */
 @keyframes fall {
-  from { top: 0; }
-  to { top: 90%; }
+  from { top: 0; opacity: 1; }
+  to { top: 90%;  opacity: 0;}
 }
 
 span.word {
@@ -270,27 +270,20 @@ span.word.incorrect {
 }
 
 
-
 /* Reduce the size of game stats */
 #typing-speed,
 #accuracy,
 #score {
   font-size: 1.35rem;
-  /* Even larger */
-  /* Reduce font size */
   font-weight: 500;
-  /* Adjust font weight */
 }
 
 .text-sm {
   font-size: 1.18rem;
-  /* Even larger */
-  /* Reduce the size of smaller text */
 }
 
 .flex.gap-8>div {
   gap: 4px;
-  /* Reduce spacing between stats */
 }
 
 .flex.justify-between.mb-6.px-4 {
@@ -306,47 +299,35 @@ span.word.incorrect {
 
 .leaderboard-icon {
   width: 32px;
-
   height: 32px;
-  /* Increase height */
   border-radius: 50%;
-  /* Ensure circular shape */
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1rem;
-  /* Increase font size for icons */
   font-weight: bold;
   color: #fff;
 }
 
 .leaderboard-icon.first {
   background-color: gold;
-  /* Gold for 1st place */
 }
 
 .leaderboard-icon.second {
   background-color: silver;
-  /* Silver for 2nd place */
 }
 
 .leaderboard-icon.third {
   background-color: #cd7f32;
-  /* Bronze for 3rd place */
 }
 
 /* Leaderboard table */
 .leaderboard-table {
   max-width: 98%;
-  /* Reduce the table width */
   margin: 0 auto;
-  /* Center the table */
   border: 1px solid #d1d5db;
-  /* Add a grey outline */
   border-radius: 8px;
-  /* Add rounded corners */
   overflow: hidden;
-  /* Ensure content stays within the rounded corners */
 }
 
 .leaderboard-table th,
