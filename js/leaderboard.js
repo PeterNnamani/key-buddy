@@ -27,25 +27,45 @@ function populateLeaderboard(results) {
         const cardOrder = [top3[1], top3[0], top3[2]];
 
         leaderboardCards.innerHTML = cardOrder
-            .map((user, i) => {
-                const realRank = results.indexOf(user) + 1;
-                return `
-                <div class="leaderboard-card">
-                    <span class="leaderboard-trophy ${realRank === 1 ? 'gold' : realRank === 2 ? 'silver' : 'bronze'}">
-                        <i class="ri-trophy-line"></i>
-                    </span>
-                    ${getAvatarHTML(user.avatar, 56)}
-                    <div class="leaderboard-rank">#${realRank}</div>
-                    <div class="leaderboard-name">${user.username}</div>
-                    <div class="leaderboard-role">${getRankBadge(realRank).replace(/<[^>]+>/g, '')}</div>
-                    <div class="leaderboard-stats">
-                        <div><div style="font-weight:600;">Score</div><div>${user.score || 0}</div></div>
-                        <div><div style="font-weight:600;">Speed</div><div>${user.speed || 0} WPM</div></div>
-                        <div><div style="font-weight:600;">Time</div><div>${user.time || 0}s</div></div>
-                    </div>
-                </div>`;
-            })
-            .join('');
+        .map((user, i) => {
+          const realRank = results.indexOf(user) + 1;
+      
+          return `
+            <div class="w-64 bg-white rounded-2xl shadow-lg p-5 flex flex-col items-center relative border-2 ${
+              realRank === 1 ? 'border-yellow-400 scale-105' : 'border-gray-100'
+            } transition-transform duration-300 ease-in-out">
+              <span class="absolute -top-4 right-4 text-xl ${
+                realRank === 1
+                  ? 'text-yellow-400'
+                  : realRank === 2
+                  ? 'text-gray-400'
+                  : 'text-orange-400'
+              }">
+                <i class="ri-trophy-line"></i>
+              </span>
+              ${getAvatarHTML(user.avatar, 72)}
+              <div class="text-xl font-bold mt-3 text-gray-800">#${realRank}</div>
+              <div class="text-lg font-semibold text-blue-700">${user.username}</div>
+              <div class="text-sm text-gray-500 mb-2">${getRankBadge(realRank).replace(/<[^>]+>/g, '')}</div>
+              <div class="w-full grid grid-cols-3 text-center mt-4 gap-2">
+                <div>
+                  <div class="text-xs font-semibold text-gray-500">Score</div>
+                  <div class="text-base font-medium text-gray-800">${user.score || 0}</div>
+                </div>
+                <div>
+                  <div class="text-xs font-semibold text-gray-500">Speed</div>
+                  <div class="text-base font-medium text-gray-800">${user.speed || 0} WPM</div>
+                </div>
+                <div>
+                  <div class="text-xs font-semibold text-gray-500">Time</div>
+                  <div class="text-base font-medium text-gray-800">${user.time || 0}s</div>
+                </div>
+              </div>
+            </div>
+          `;
+        })
+        .join('');
+      
 
         // Add remaining (4th and beyond) to table
         results.slice(3).forEach((user, i) => {

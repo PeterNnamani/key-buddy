@@ -60,6 +60,10 @@ startGameBtn.addEventListener('click', () => {
     // startLevelWithCountdown(levelIndex);
 });
 
+document.getElementById('play-again-leaderboard').addEventListener('click', () => {
+    location.reload();
+});
+
 nextLevelButton.addEventListener('click', () => {
     const hasRegistered = localStorage.getItem('has-registered') === 'true';
     levelCompletionModal.classList.add('hidden');
@@ -269,7 +273,7 @@ function startLevel5(currentSentence) {
 
     let totalTypedChars = 0;
     let correctChars = 0;
-    let startTime = null;
+    //let startTime = null;
 
     // Render and drop one word every 4 seconds
     function renderFallingWord(index) {
@@ -572,7 +576,7 @@ function calculateNormalizedScore(speedWPM, accuracy, maxLevelScore = 20, idealW
     };
 }
 
-function updateStats(levelStats){
+function updateStats(levelStats) {
     gameStats.levels[levelIndex] = levelStats;
 
     // Accumulate total stats
@@ -613,7 +617,6 @@ function showFinalResults() {
     document.getElementById('play-again').addEventListener('click', () => {
         location.reload();
     });
-
     // const closeLeaderboardButton = document.getElementById('close-leaderboard');
     // const backToResultsButton = document.getElementById('back-to-results');
 }
