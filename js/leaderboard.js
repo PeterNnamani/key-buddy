@@ -1,15 +1,17 @@
 import makeRequest from "./request";
 
-makeRequest({
-    method: 'GET',
-    onSuccess: function (result) {
-        if (result.status) {
-            showLeaderboard(result.response);
+export default function showLeaderboard(){
+    makeRequest({
+        method: 'GET',
+        onSuccess: function (result) {
+            if (result.status) {
+                populateLeaderboard(result.response);
+            }
         }
-    }
-});
+    });
+}
 
-function showLeaderboard(results) {
+function populateLeaderboard(results) {
     const leaderboardModal = document.getElementById('leaderboard-modal');
     const leaderboardBody = document.getElementById('leaderboard-body');
     const leaderboardCards = document.getElementById('leaderboard-cards');

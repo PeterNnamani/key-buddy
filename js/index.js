@@ -1043,3 +1043,291 @@ document.addEventListener('DOMContentLoaded', () => {
     // Add logic to initialize the next level
   }
 });
+
+
+function startLevel1() {
+  resetGameUI();
+  currentSentence = getRandomSentence(0);
+  console.log('Sentence ', currentSentence);
+  renderSentence(currentSentence);
+  typingInput.value = '';
+  typingInput.disabled = false;
+  typingInput.focus();
+  startTime = null;
+  correctChars = 0;
+  totalTypedChars = 0;
+
+  currentLevelElement.textContent = '1';
+  timerElement.textContent = `${level.timeLimit}s`;
+
+  // Timer countdown
+  let timeLeft = level.timeLimit;
+  timerInterval = setInterval(() => {
+      timeLeft--;
+      timerElement.textContent = `${timeLeft}s`;
+      if (timeLeft <= 0) {
+          endLevel();
+      }
+  }, 1000);
+}
+
+function startLevel2() {
+  resetGameUI();
+  currentSentence = getRandomSentence(1);
+  console.log('Level 2 Sentence:', currentSentence);
+  renderSentence2(currentSentence); // This now adds scrolling animation
+  typingInput.value = '';
+  typingInput.disabled = false;
+  typingInput.focus();
+  startTime = null;
+  correctChars = 0;
+  totalTypedChars = 0;
+
+  currentLevelElement.textContent = '2';
+  timerElement.textContent = `${level.timeLimit}s`;
+
+  let timeLeft = level.timeLimit;
+  timerInterval = setInterval(() => {
+      timeLeft--;
+      timerElement.textContent = `${timeLeft}s`;
+      if (timeLeft <= 0) {
+          stopScrolling(); // Pause scroll
+          endLevel();
+      }
+  }, 1000);
+}
+
+function startLevel3() {
+  resetGameUI();
+  currentSentence = getRandomSentence(2);
+  console.log('Level 3 Sentence:', currentSentence);
+  renderSentenceVertical(currentSentence);
+  typingInput.value = '';
+  typingInput.disabled = false;
+  typingInput.focus();
+  startTime = null;
+  correctChars = 0;
+  totalTypedChars = 0;
+
+  currentLevelElement.textContent = '3';
+  timerElement.textContent = `${level.timeLimit}s`;
+
+  let timeLeft = level.timeLimit;
+  timerInterval = setInterval(() => {
+      timeLeft--;
+      timerElement.textContent = `${timeLeft}s`;
+      if (timeLeft <= 0) {
+          endLevel();
+      }
+  }, 1000);
+}
+
+function startLevel4(currentSentence) {
+  resetGameUI();
+
+  currentSentence = getRandomSentence(3);
+  const words = currentSentence.split(' ');
+  let currentWordIndex = 0;
+
+  typingInput.disabled = false;
+  typingInput.value = '';
+  typingInput.focus();
+
+  currentLevelElement.textContent = '4';
+  timerElement.textContent = `${level.timeLimit}s`;
+
+  startTime = null;
+  correctChars = 0;
+  totalTypedChars = 0;
+
+  let currentWord = '';
+  let spans = [];
+
+  function showWord(index) {
+      if (index >= words.length) {
+          endLevel();
+          return;
+      }
+
+      currentWord = words[index];
+      typingInput.value = '';
+      textDisplay.innerHTML = '';
+
+      const wordSpanContainer = document.createElement('span');
+      wordSpanContainer.className = 'word-container fade-in';
+
+      spans = [];
+
+      currentWord.split('').forEach((char, i) => {
+          const span = document.createElement('span');
+          span.textContent = char;
+          span.setAttribute('data-index', i);
+          span.classList.add('word');
+          wordSpanContainer.appendChild(span);
+          spans.push(span);
+      });
+
+      textDisplay.appendChild(wordSpanContainer);
+
+      // Fade out and move to next word regardless of user input
+      setTimeout(() => {
+          wordSpanContainer.classList.remove('fade-in');
+          wordSpanContainer.classList.add('fade-out');
+
+          // Wait for fade to complete
+          setTimeout(() => {
+              currentWordIndex++;
+              progressFill.style.width = `${(currentWordIndex / words.length) * 100}%`;
+              showWord(currentWordIndex);
+          }, 500); // Match CSS fade-out duration
+      }, 5000); // Show word for 5s
+  }
+
+  showWord(currentWordIndex);
+
+  let timeLeft = level.timeLimit;
+  timerInterval = setInterval(() => {
+      timeLeft--;
+      timerElement.textContent = `${timeLeft}s`;
+      if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          endLevel();
+      }
+  }, 1000);
+
+  typingInput.oninput = () => {
+      if (!startTime) startTime = new Date();
+
+      const userInput = typingInput.value;
+      totalTypedChars++;
+      correctChars = 0;
+
+      spans.forEach((span, i) => {
+          const typedChar = userInput[i];
+          const expectedChar = currentWord[i];
+
+          span.classList.remove('correct', 'incorrect');
+
+          if (typedChar == null) return;
+
+          if (typedChar === expectedChar) {
+              span.classList.add('correct');
+              correctChars++;
+          } else {
+              span.classList.add('incorrect');
+          }
+      });
+
+      const accuracy = totalTypedChars === 0 ? 100 : Math.round((correctChars / totalTypedChars) * 100);
+      accuracyElement.textContent = `${accuracy}%`;
+
+      const elapsedTime = (new Date() - startTime) / 1000;
+      const wordsTyped = currentWordIndex;
+      const speedWPM = elapsedTime > 0 ? Math.round((wordsTyped / elapsedTime) * 60) : 0;
+      typingSpeedElement.textContent = `${speedWPM} WPM`;
+  };
+}
+
+function startLevel5() {
+  resetGameUI();
+
+  currentSentence = getRandomSentence(4);
+  const words = currentSentence.split(' ');
+  let currentWordIndex = 0;
+
+  typingInput.value = '';
+  typingInput.disabled = false;
+  typingInput.focus();
+
+  startTime = null;
+  correctChars = 0;
+  totalTypedChars = 0;
+
+  currentLevelElement.textContent = '5';
+  timerElement.textContent = `${levels[4].timeLimit}s`;
+
+  let currentWord = '';
+  let spans = [];
+
+  function renderFallingWord(index) {
+      if (index >= words.length) {
+          clearInterval(timerInterval);
+          clearInterval(fallingTimer);
+          endLevel();
+          return;
+      }
+
+      currentWord = words[index];
+      typingInput.value = ''; // Clear input early
+
+      // Remove any previous falling word immediately
+      textDisplay.innerHTML = '';
+
+      const wordContainer = document.createElement('div');
+      wordContainer.className = 'falling-word';
+      wordContainer.style.animation = 'fall 5s linear forwards';
+
+      spans = [];
+
+      currentWord.split('').forEach((char, i) => {
+          const span = document.createElement('span');
+          span.textContent = char;
+          span.setAttribute('data-index', i);
+          span.classList.add('word');
+          wordContainer.appendChild(span);
+          spans.push(span);
+      });
+
+      textDisplay.appendChild(wordContainer);
+
+      setTimeout(() => {
+          currentWordIndex++;
+          renderFallingWord(currentWordIndex);
+          progressFill.style.width = `${(currentWordIndex / words.length) * 100}%`;
+      }, 4000); // Move to next word regardless of input
+  }
+
+
+  renderFallingWord(currentWordIndex);
+
+  typingInput.oninput = () => {
+      if (!startTime) startTime = new Date();
+
+      const userInput = typingInput.value.trim();
+      totalTypedChars++;
+
+      spans.forEach((span, i) => {
+          const typedChar = userInput[i];
+          const expectedChar = currentWord[i];
+
+          span.classList.remove('correct', 'incorrect');
+
+          if (typedChar == null) return;
+
+          if (typedChar === expectedChar) {
+              span.classList.add('correct');
+              correctChars++;
+          } else {
+              span.classList.add('incorrect');
+          }
+      });
+
+      const accuracy = totalTypedChars === 0 ? 100 : Math.min(Math.round((correctChars / totalTypedChars) * 100), 100);
+      accuracyElement.textContent = `${accuracy}%`;
+
+      const elapsedTime = (new Date() - startTime) / 1000;
+      const wordsTyped = currentWordIndex;
+      const speedWPM = elapsedTime > 0 ? Math.round((wordsTyped / elapsedTime) * 60) : 0;
+      typingSpeedElement.textContent = `${speedWPM} WPM`;
+  };
+
+  let timeLeft = levels[4].timeLimit;
+  const fallingTimer = setInterval(() => {
+      timeLeft--;
+      timerElement.textContent = `${timeLeft}s`;
+      if (timeLeft <= 0) {
+          clearInterval(fallingTimer);
+          endLevel();
+      }
+  }, 1000);
+}

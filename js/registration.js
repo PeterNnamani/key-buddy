@@ -1,4 +1,4 @@
-export default function showRegistrationModal({ saveUserData, makeRequest, showCountDown }) {
+export default function showRegistrationModal({ saveUserData, makeRequest, onSubmit }) {
   const registrationModal = document.getElementById('registration-modal');
   const feedback = document.getElementById('feedback');
   const registrationForm = registrationModal.querySelector('#registration-form');
@@ -48,7 +48,7 @@ export default function showRegistrationModal({ saveUserData, makeRequest, showC
             registrationModal.classList.add('hidden');
             registrationForm.dataset.listenerAttached = 'true';
 
-            showCountDown(4);
+            onSubmit();
           } else {
             feedback.textContent = result.message;
           }

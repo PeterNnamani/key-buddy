@@ -3,6 +3,7 @@ import showCountdownAnimation from './util.js';
 import { saveUserData } from './util.js';
 import showRegistrationModal from './registration.js';
 import makeRequest from './request.js';
+import showLeaderboard from './leaderboard.js';
 
 
 // Game elements
@@ -12,22 +13,10 @@ const currentLevelElement = document.getElementById('current-level');
 const timerElement = document.getElementById('timer');
 const typingSpeedElement = document.getElementById('typing-speed');
 const accuracyElement = document.getElementById('accuracy');
-const levelProgressElement = document.getElementById('level-progress');
 const completionModal = document.getElementById('completion-modal');
-const leaderboardModal = document.getElementById('leaderboard-modal');
-const viewLeaderboardButton = document.getElementById('view-leaderboard');
-const playAgainButton = document.getElementById('play-again');
-const closeLeaderboardButton = document.getElementById('close-leaderboard');
-const backToResultsButton = document.getElementById('back-to-results');
-const modalScore = document.getElementById('modal-score');
-const modalSpeed = document.getElementById('modal-speed');
-const modalAccuracy = document.getElementById('modal-accuracy');
-const modalTime = document.getElementById('modal-time');
 const levelCompletionModal = document.getElementById('level-completion-modal');
-const nextLevelButton = document.getElementById('next-level');
-const levelModalScore = document.getElementById('level-modal-score');
-const levelModalSpeed = document.getElementById('level-modal-speed');
-const levelModalAccuracy = document.getElementById('level-modal-accuracy');
+const leaderboardModal = document.getElementById('leaderboard-modal');
+const nextLevelButton = document.getElementById('next-level-button');
 const typingInput = document.getElementById('hidden-input');
 const startGameBtn = document.getElementById('start-game');
 const introPage = document.getElementById('intro-page');
@@ -35,7 +24,8 @@ const keyboard = document.querySelector(".keyboard-container");
 const keys = keyboard.querySelectorAll(".key");
 
 
-let level = levels[0]; // Level 1
+let levelIndex = 0;
+let level = {};
 let currentSentence = '';
 let startTime = null;
 let timerInterval = null;
@@ -43,101 +33,97 @@ let correctChars = 0;
 let currentIndex = 0;
 let totalTypedChars = 0;
 
+const gameStats = {
+    levels: [],
+    totalScore: 0,
+    totalTime: 0,
+    overallAccuracy: 100,
+};
 
-function startLevel1() {
+startGameBtn.addEventListener('click', () => {
+    introPage.classList.add('hidden');
+    levelIndex = 0;
+    gameStats.levels = [];
+    gameStats.totalScore = 0;
+    gameStats.totalTime = 0;
+    gameStats.overallAccuracy = 100;
+
+    startLevelWithCountdown(levelIndex);
+});
+
+nextLevelButton.addEventListener('click', () => {
+    levelCompletionModal.classList.add('hidden');
+    levelIndex++;
+
+    if (levelIndex === 3) {
+        showRegistrationModal({
+            saveUserData,
+            makeRequest,
+            onSubmit: () => {
+                startLevel(levelIndex);
+            }
+        });
+    } else if (levelIndex < levels.length) {
+        startLevelWithCountdown(levelIndex);
+    } else {
+        makeRequest({
+
+        });
+    }
+});
+
+function startLevelWithCountdown(levelIdx) {
+    showCountdownAnimation(() => {
+        startLevel(levelIdx);
+    });
+}
+
+function startLevel(index) {
+    levelIndex = index;
+    level = levels[index];
+
     resetGameUI();
-    currentSentence = getRandomSentence(0);
-    console.log('Sentence ', currentSentence);
-    renderSentence(currentSentence);
-    typingInput.value = '';
-    typingInput.disabled = false;
-    typingInput.focus();
-    startTime = null;
+    currentSentence = getRandomSentence(index);
     correctChars = 0;
     totalTypedChars = 0;
+    startTime = null;
 
-    currentLevelElement.textContent = '1';
+    typingInput.disabled = false;
+    typingInput.value = '';
+    typingInput.focus();
+
+    currentLevelElement.textContent = (index + 1).toString();
     timerElement.textContent = `${level.timeLimit}s`;
 
-    // Timer countdown
+    // Setup level-specific render and logic
+    switch (index) {
+        case 0:
+            renderSentence(currentSentence);
+        case 1:
+            renderSentence2(currentSentence);
+        case 2:
+            renderSentenceVertical(currentSentence);
+        case 3:
+            startLevel4(currentSentence);
+        case 4:
+            startLevel5(currentSentence);
+    }
+
     let timeLeft = level.timeLimit;
     timerInterval = setInterval(() => {
         timeLeft--;
         timerElement.textContent = `${timeLeft}s`;
         if (timeLeft <= 0) {
+            if (levelIndex === 1) stopScrolling();
+            clearInterval(timerInterval);
             endLevel();
         }
     }, 1000);
 }
 
-function startLevel2() {
-    resetGameUI();
-    currentSentence = getRandomSentence(1);
-    console.log('Level 2 Sentence:', currentSentence);
-    renderSentence2(currentSentence); // This now adds scrolling animation
-    typingInput.value = '';
-    typingInput.disabled = false;
-    typingInput.focus();
-    startTime = null;
-    correctChars = 0;
-    totalTypedChars = 0;
-
-    currentLevelElement.textContent = '2';
-    timerElement.textContent = `${level.timeLimit}s`;
-
-    let timeLeft = level.timeLimit;
-    timerInterval = setInterval(() => {
-        timeLeft--;
-        timerElement.textContent = `${timeLeft}s`;
-        if (timeLeft <= 0) {
-            stopScrolling(); // Pause scroll
-            endLevel();
-        }
-    }, 1000);
-}
-
-function startLevel3() {
-    resetGameUI();
-    currentSentence = getRandomSentence(2);
-    console.log('Level 3 Sentence:', currentSentence);
-    renderSentenceVertical(currentSentence);
-    typingInput.value = '';
-    typingInput.disabled = false;
-    typingInput.focus();
-    startTime = null;
-    correctChars = 0;
-    totalTypedChars = 0;
-
-    currentLevelElement.textContent = '3';
-    timerElement.textContent = `${level.timeLimit}s`;
-
-    let timeLeft = level.timeLimit;
-    timerInterval = setInterval(() => {
-        timeLeft--;
-        timerElement.textContent = `${timeLeft}s`;
-        if (timeLeft <= 0) {
-            endLevel();
-        }
-    }, 1000);
-}
-
-function startLevel4() {
-    resetGameUI();
-
-    currentSentence = getRandomSentence(3);
+function startLevel4(currentSentence) {
     const words = currentSentence.split(' ');
     let currentWordIndex = 0;
-
-    typingInput.disabled = false;
-    typingInput.value = '';
-    typingInput.focus();
-
-    currentLevelElement.textContent = '4';
-    timerElement.textContent = `${level.timeLimit}s`;
-
-    startTime = null;
-    correctChars = 0;
-    totalTypedChars = 0;
 
     let currentWord = '';
     let spans = [];
@@ -184,16 +170,6 @@ function startLevel4() {
 
     showWord(currentWordIndex);
 
-    let timeLeft = level.timeLimit;
-    timerInterval = setInterval(() => {
-        timeLeft--;
-        timerElement.textContent = `${timeLeft}s`;
-        if (timeLeft <= 0) {
-            clearInterval(timerInterval);
-            endLevel();
-        }
-    }, 1000);
-
     typingInput.oninput = () => {
         if (!startTime) startTime = new Date();
 
@@ -228,35 +204,9 @@ function startLevel4() {
 }
 
 
-function stopScrolling() {
-    const scrollSpan = document.querySelector('.scroll-text');
-    if (scrollSpan) scrollSpan.style.animationPlayState = 'paused';
-}
-
-
-function getRandomSentence(index) {
-    level = levels[index];
-    const idx = Math.floor(Math.random() * level.words.length);
-    return level.words[idx];
-}
-
-function startLevel5() {
-    resetGameUI();
-
-    currentSentence = getRandomSentence(4);
+function startLevel5(currentSentence) {
     const words = currentSentence.split(' ');
     let currentWordIndex = 0;
-
-    typingInput.value = '';
-    typingInput.disabled = false;
-    typingInput.focus();
-
-    startTime = null;
-    correctChars = 0;
-    totalTypedChars = 0;
-
-    currentLevelElement.textContent = '5';
-    timerElement.textContent = `${levels[4].timeLimit}s`;
 
     let currentWord = '';
     let spans = [];
@@ -268,19 +218,19 @@ function startLevel5() {
             endLevel();
             return;
         }
-    
+
         currentWord = words[index];
         typingInput.value = ''; // Clear input early
-    
+
         // Remove any previous falling word immediately
         textDisplay.innerHTML = '';
-    
+
         const wordContainer = document.createElement('div');
         wordContainer.className = 'falling-word';
         wordContainer.style.animation = 'fall 5s linear forwards';
-    
+
         spans = [];
-    
+
         currentWord.split('').forEach((char, i) => {
             const span = document.createElement('span');
             span.textContent = char;
@@ -289,16 +239,16 @@ function startLevel5() {
             wordContainer.appendChild(span);
             spans.push(span);
         });
-    
+
         textDisplay.appendChild(wordContainer);
-    
+
         setTimeout(() => {
             currentWordIndex++;
             renderFallingWord(currentWordIndex);
             progressFill.style.width = `${(currentWordIndex / words.length) * 100}%`;
         }, 4000); // Move to next word regardless of input
     }
-    
+
 
     renderFallingWord(currentWordIndex);
 
@@ -332,19 +282,13 @@ function startLevel5() {
         const speedWPM = elapsedTime > 0 ? Math.round((wordsTyped / elapsedTime) * 60) : 0;
         typingSpeedElement.textContent = `${speedWPM} WPM`;
     };
-
-    let timeLeft = levels[4].timeLimit;
-    const fallingTimer = setInterval(() => {
-        timeLeft--;
-        timerElement.textContent = `${timeLeft}s`;
-        if (timeLeft <= 0) {
-            clearInterval(fallingTimer);
-            endLevel();
-        }
-    }, 1000);
 }
 
-
+function getRandomSentence(index) {
+    level = levels[index];
+    const idx = Math.floor(Math.random() * level.words.length);
+    return level.words[idx];
+}
 
 function renderSentenceVertical(sentence) {
     textDisplay.innerHTML = '';
@@ -364,7 +308,6 @@ function renderSentenceVertical(sentence) {
     textDisplay.appendChild(scrollingSpan);
 }
 
-
 function renderSentence2(sentence) {
     textDisplay.innerHTML = '';
 
@@ -383,7 +326,6 @@ function renderSentence2(sentence) {
     textDisplay.appendChild(scrollingSpan);
 }
 
-
 function renderSentence(sentence) {
     textDisplay.innerHTML = '';
     sentence.split('').forEach((char, index) => {
@@ -393,14 +335,6 @@ function renderSentence(sentence) {
         span.classList.add('word');
         textDisplay.appendChild(span);
     });
-}
-
-function resetGameUI() {
-    clearInterval(timerInterval);
-    progressFill.style.width = '0%';
-    // scoreElement.textContent = '';
-    typingSpeedElement.textContent = '';
-    accuracyElement.textContent = '';
 }
 
 typingInput.addEventListener('input', () => {
@@ -480,6 +414,11 @@ function scrollToSpan(index) {
     }
 }
 
+function stopScrolling() {
+    const scrollSpan = document.querySelector('.scroll-text');
+    if (scrollSpan) scrollSpan.style.animationPlayState = 'paused';
+}
+
 function highlightSuggestedKey() {
     clearKeyHighlights();
 
@@ -518,27 +457,75 @@ function endLevel() {
     clearInterval(timerInterval);
     typingInput.disabled = true;
 
-    const timeTaken = (new Date() - startTime) / 1000; // in seconds
-    const wordsTyped = currentSentence.trim().split(/\s+/).length;
-    const speedWPM = Math.round((wordsTyped / timeTaken) * 60);
-    const accuracy = Math.round((correctChars / currentSentence.length) * 100);
+    const timeTaken = (new Date() - startTime) / 1000 || 0.01;
+    // const wordsTyped = currentSentence.trim().split(/\s+/).length;
+    const speedWPM = Math.round(((totalTypedChars / 5) / timeTaken) * 60);
+    const accuracy = totalTypedChars === 0 ? 100 :
+        Math.min(Math.round((correctChars / totalTypedChars) * 100), 100);
     const score = Math.round(speedWPM * (accuracy / 100));
+
+    // Save level stats
+    gameStats.levels[levelIndex] = {
+        level: levelIndex + 1,
+        score,
+        accuracy,
+        speedWPM,
+        timeTaken: timeTaken.toFixed(2),
+    };
+
+    // Update total stats
+    gameStats.totalScore += score;
+    gameStats.totalTime += timeTaken;
+    // Recalculate overall accuracy as average of all levels
+    const totalAccuracySum = gameStats.levels.reduce((sum, lvl) => sum + lvl.accuracy, 0);
+    gameStats.overallAccuracy = Math.round(totalAccuracySum / gameStats.levels.length);
+
+    // Show level completion modal with stats
+    showLevelCompletionModal(score, accuracy, speedWPM, timeTaken);
+
+    // The flow to next level is handled by nextLevelButton event
 
     typingSpeedElement.textContent = `${speedWPM} WPM`;
     accuracyElement.textContent = `${accuracy}%`;
     // scoreElement.textContent = score;
-
-    // Optional: Show completion modal or level up
-    completionModal.style.display = 'flex';
 }
 
-// Optional buttons
-playAgainButton.addEventListener('click', () => {
-    completionModal.style.display = 'none';
-    startLevel2();
-});
+function showLevelCompletionModal(score, accuracy, speedWPM, timeTaken) {
+    levelCompletionModal.style.display = 'flex';
+    document.getElementById('level-modal-score').textContent = score;
+    document.getElementById('level-modal-accuracy').textContent = `${accuracy}%`;
+    document.getElementById('level-modal-speed').textContent = `${speedWPM} WPM`;
+    document.getElementById('level-modal-time').textContent = `${timeTaken.toFixed(2)}s`;
+}
 
-startGameBtn.addEventListener('click', () => {
-    introPage.classList.add('hidden');
-    startLevel2();
-});
+function showFinalResults() {
+    levelCompletionModal.style.display = 'none';
+    completionModal.style.display = 'flex';
+
+    document.getElementById('modal-score').textContent = gameStats.totalScore;
+    document.getElementById('modal-time').textContent = gameStats.totalTime.toFixed(2);
+    document.getElementById('modal-accuracy').textContent = `${gameStats.overallAccuracy}%`;
+    document.getElementById('modal-speed').textContent = `${Math.round((gameStats.totalScore / gameStats.totalTime) * 60)} WPM`;
+
+    document.getElementById('view-leaderboard').addEventListener('click', () => {
+        completionModal.style.display = 'none';
+        leaderboardModal.style.display = 'flex';
+        showLeaderboard();
+    });
+
+    document.getElementById('play-again').addEventListener('click', () => {
+        location.reload();
+    });
+
+    // const closeLeaderboardButton = document.getElementById('close-leaderboard');
+    // const backToResultsButton = document.getElementById('back-to-results');
+}
+
+function resetGameUI() {
+    progressFill.style.width = '0%';
+    typingInput.value = '';
+    accuracyElement.textContent = '100%';
+    typingSpeedElement.textContent = '0 WPM';
+    timerElement.textContent = `${levels[levelIndex].timeLimit} s`;
+    textDisplay.innerHTML = '';
+}
