@@ -44,6 +44,8 @@ const gameStats = {
     overallAccuracy: 100,
 };
 
+const clamp = (val, min, max) => Math.max(min, Math.min(max, val));
+
 startGameBtn.addEventListener('click', () => {
     console.log('Start game ');
     introPage.classList.add('hidden');
@@ -204,6 +206,8 @@ function startLevel4(currentSentence) {
 
         textDisplay.appendChild(wordSpanContainer);
 
+        const wordDisplayTime = clamp((level.timeLimit / words.length) * 1000, 1500, 7000);
+
         // Fade out and move to next word regardless of user input
         const fadeOutTimeout = setTimeout(() => {
             wordSpanContainer.classList.remove('fade-in');
@@ -217,7 +221,7 @@ function startLevel4(currentSentence) {
             }, 500); // Match CSS fade-out duration
 
             level4Timeouts.push(nextWordTimeout);
-        }, 5000); // Show word for 5s
+        }, wordDisplayTime); // Show word for 5s
 
         level4Timeouts.push(fadeOutTimeout);
     }
@@ -296,6 +300,8 @@ function startLevel5(currentSentence) {
         activeSpans = spans;
     }
 
+    const dropInterval = clamp((level.timeLimit / words.length) * 1000, 1500, 7000); // e.g., 1.5s - 7s
+
     // Interval to drop each word every 4 seconds
     const wordInterval = setInterval(() => {
         if (currentWordIndex >= words.length) {
@@ -308,7 +314,7 @@ function startLevel5(currentSentence) {
         renderFallingWord(currentWordIndex);
         currentWordIndex++;
         progressFill.style.width = `${(currentWordIndex / words.length) * 100}%`;
-    }, 4000);
+    }, dropInterval);
 
     // Typing input logic (validates only active word)
     typingInput2.oninput = () => {
@@ -521,43 +527,58 @@ document.addEventListener("keydown", (e) => {
 
 function endLevel() {
     clearInterval(timerInterval);
-    disableInput(typingInput);
-    disableInput(typingInput2);
-    disableInput(typingInput3);
 
-    if(levelIndex === 3) cleanupLevel4();
+    // Disable all typing inputs
+    [typingInput, typingInput2, typingInput3].forEach(disableInput);
 
+    // Handle special cleanup for level 4
+    if (levelIndex === 3) cleanupLevel4();
+
+    // Avoid divide-by-zero: minimum 0.01 seconds
     const timeTaken = (new Date() - startTime) / 1000 || 0.01;
-    // const wordsTyped = currentSentence.trim().split(/\s+/).length;
+
     const speedWPM = Math.round(((totalTypedChars / 5) / timeTaken) * 60);
     const accuracy = totalTypedChars === 0 ? 100 :
         Math.min(Math.round((correctChars / totalTypedChars) * 100), 100);
-    const score = Math.round(speedWPM * (accuracy / 100));
 
-    // Save level stats
-    gameStats.levels[levelIndex] = {
+    const { rawScore, normalizedScore } = calculateNormalizedScore(speedWPM, accuracy);
+
+    // Save level-specific stats
+    const levelStats = {
         level: levelIndex + 1,
-        score,
+        normalizedScore,
         accuracy,
         speedWPM,
-        timeTaken: timeTaken.toFixed(2),
+        timeTaken: +timeTaken.toFixed(2),
+        correctKeystrokes: correctChars,
+        totalKeystrokes: totalTypedChars,
     };
 
-    // Update total stats
-    gameStats.totalScore += score;
+    gameStats.levels[levelIndex] = levelStats;
+
+    // Accumulate total stats
+    gameStats.totalScore += normalizedScore;
     gameStats.totalTime += timeTaken;
-    // Recalculate overall accuracy as average of all levels
-    const totalAccuracySum = gameStats.levels.reduce((sum, lvl) => sum + lvl.accuracy, 0);
+
+    // Recalculate average accuracy
+    const totalAccuracySum = gameStats.levels.reduce((sum, l) => sum + l.accuracy, 0);
     gameStats.overallAccuracy = Math.round(totalAccuracySum / gameStats.levels.length);
 
-    // Show level completion modal with stats
-    showLevelCompletionModal(score, accuracy, speedWPM, timeTaken);
+    // Show stats in modal
+    showLevelCompletionModal(normalizedScore, accuracy, speedWPM, timeTaken);
 
-    // The flow to next level is handled by nextLevelButton event
-
+    // Update UI elements
     typingSpeedElement.textContent = `${speedWPM} WPM`;
     accuracyElement.textContent = `${accuracy}%`;
-    // scoreElement.textContent = score;
+}
+
+function calculateNormalizedScore(speedWPM, accuracy, maxLevelScore = 20, idealWPM = 80) {
+    const raw = speedWPM * (accuracy / 100);
+    const normalized = Math.min((raw / idealWPM) * maxLevelScore, maxLevelScore);
+    return {
+        rawScore: Math.round(raw),
+        normalizedScore: Math.round(normalized),
+    };
 }
 
 function showLevelCompletionModal(score, accuracy, speedWPM, timeTaken) {
