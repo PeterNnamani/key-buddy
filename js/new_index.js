@@ -50,13 +50,14 @@ const clamp = (val, min, max) => Math.max(min, Math.min(max, val));
 startGameBtn.addEventListener('click', () => {
     console.log('Start game ');
     introPage.classList.add('hidden');
-    levelIndex = 0;
-    gameStats.levels = [];
-    gameStats.totalScore = 0;
-    gameStats.totalTime = 0;
-    gameStats.overallAccuracy = 100;
+    showLeaderboard();
+    // levelIndex = 0;
+    // gameStats.levels = [];
+    // gameStats.totalScore = 0;
+    // gameStats.totalTime = 0;
+    // gameStats.overallAccuracy = 100;
 
-    startLevelWithCountdown(levelIndex);
+    // startLevelWithCountdown(levelIndex);
 });
 
 nextLevelButton.addEventListener('click', () => {
@@ -343,9 +344,7 @@ function startLevel5(currentSentence) {
         accuracyElement.textContent = `${accuracy}%`;
 
         const elapsedTime = (new Date() - startTime) / 1000;
-        const speedWPM = elapsedTime > 0
-            ? Math.round((currentWordIndex / elapsedTime) * 60)
-            : 0;
+        const speedWPM = Math.round((currentWordIndex / elapsedTime) * 60);
         typingSpeedElement.textContent = `${speedWPM} WPM`;
     };
 
@@ -550,16 +549,7 @@ function endLevel() {
         totalKeystrokes: totalTypedChars,
     };
 
-    gameStats.levels[levelIndex] = levelStats;
-
-    // Accumulate total stats
-    gameStats.totalScore += normalizedScore;
-    gameStats.totalTime += timeTaken;
-    gameStats.speed = speedWPM;
-
-    // Recalculate average accuracy
-    const totalAccuracySum = gameStats.levels.reduce((sum, l) => sum + l.accuracy, 0);
-    gameStats.overallAccuracy = Math.round(totalAccuracySum / gameStats.levels.length);
+    updateStats(levelStats);
 
     // Show stats in modal
     if (levelIndex === 4) {
@@ -580,6 +570,19 @@ function calculateNormalizedScore(speedWPM, accuracy, maxLevelScore = 20, idealW
         rawScore: Math.round(raw),
         normalizedScore: Math.round(normalized),
     };
+}
+
+function updateStats(levelStats){
+    gameStats.levels[levelIndex] = levelStats;
+
+    // Accumulate total stats
+    gameStats.totalScore += normalizedScore;
+    gameStats.totalTime += timeTaken;
+    gameStats.speed = speedWPM;
+
+    // Recalculate average accuracy
+    const totalAccuracySum = gameStats.levels.reduce((sum, l) => sum + l.accuracy, 0);
+    gameStats.overallAccuracy = Math.round(totalAccuracySum / gameStats.levels.length);
 }
 
 function showLevelCompletionModal(score, accuracy, speedWPM, timeTaken) {
@@ -647,12 +650,15 @@ async function saveResultToServer() {
 
     userData.score = gameStats.totalScore > userData.score ? gameStats.totalScore : userData.score;
     userData.speed = gameStats.speed > userData.speed ? gameStats.speed : userData.speed;
-    userData.accuracy = gameStats.accuracy > userData.accuracy ? gameStats.accuracy : userData.accuracy;
+    userData.accuracy = gameStats.overallAccuracy > userData.accuracy ? gameStats.overallAccuracy : userData.accuracy;
     userData.time = gameStats.totalTime > userData.time ? gameStats.totalTime : userData.time;
 
     console.log('Updated user data:', userData);
     // Save user data to local storage
     saveUserData(userData);
-    // Save user data to the server
-    await makeRequest({ payload: userData, onSuccess: (data) => console.log('data', data) });
+
+    if (userData.score < gameStats.totalScore) {
+        // Save user data to the server
+        await makeRequest({ payload: userData, onSuccess: (data) => console.log('data', data) });
+    }
 }
