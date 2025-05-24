@@ -42,6 +42,7 @@ const gameStats = {
     totalScore: 0,
     totalTime: 0,
     overallAccuracy: 100,
+    speed: 0
 };
 
 const clamp = (val, min, max) => Math.max(min, Math.min(max, val));
@@ -76,11 +77,6 @@ nextLevelButton.addEventListener('click', () => {
         });
     } else if (levelIndex < levels.length) {
         startLevelWithCountdown(levelIndex);
-    } else {
-
-        // makeRequest({
-
-        // });
     }
 });
 
@@ -388,7 +384,7 @@ function renderSentenceVertical(sentence) {
 
     const scrollingSpan = document.createElement('div');
     scrollingSpan.classList.add('scroll-text-vertical');
-    scrollingSpan.style.animationDuration = '16s'; // Adjust based on sentence length if needed
+    scrollingSpan.style.animationDuration = '20s';
 
     sentence.split('').forEach((char, index) => {
         const span = document.createElement('span');
@@ -406,7 +402,7 @@ function renderSentence2(sentence) {
 
     const scrollingSpan = document.createElement('div');
     scrollingSpan.classList.add('scroll-text');
-    scrollingSpan.style.animationDuration = '30s'; // You can adjust based on sentence length
+    scrollingSpan.style.animationDuration = '40s'; // You can adjust based on sentence length
 
     sentence.split('').forEach((char, index) => {
         const span = document.createElement('span');
@@ -559,13 +555,18 @@ function endLevel() {
     // Accumulate total stats
     gameStats.totalScore += normalizedScore;
     gameStats.totalTime += timeTaken;
+    gameStats.speed = speedWPM;
 
     // Recalculate average accuracy
     const totalAccuracySum = gameStats.levels.reduce((sum, l) => sum + l.accuracy, 0);
     gameStats.overallAccuracy = Math.round(totalAccuracySum / gameStats.levels.length);
 
     // Show stats in modal
-    showLevelCompletionModal(normalizedScore, accuracy, speedWPM, timeTaken);
+    if (levelIndex === 4) {
+        showFinalResults();
+    } else {
+        showLevelCompletionModal(normalizedScore, accuracy, speedWPM, timeTaken);
+    }
 
     // Update UI elements
     typingSpeedElement.textContent = `${speedWPM} WPM`;
@@ -590,6 +591,8 @@ function showLevelCompletionModal(score, accuracy, speedWPM, timeTaken) {
 }
 
 function showFinalResults() {
+    saveResultToServer();
+
     levelCompletionModal.style.display = 'none';
     completionModal.style.display = 'flex';
 
@@ -637,4 +640,19 @@ function cleanupLevel4() {
     level4Timeouts = [];
     typingInput3.oninput = null;
     textDisplay.classList.remove('fade-in', 'fade-out');
+}
+
+async function saveResultToServer() {
+    const userData = JSON.parse(localStorage.getItem('user-data') || '{}');
+
+    userData.score = gameStats.totalScore > userData.score ? gameStats.totalScore : userData.score;
+    userData.speed = gameStats.speed > userData.speed ? gameStats.speed : userData.speed;
+    userData.accuracy = gameStats.accuracy > userData.accuracy ? gameStats.accuracy : userData.accuracy;
+    userData.time = gameStats.totalTime > userData.time ? gameStats.totalTime : userData.time;
+
+    console.log('Updated user data:', userData);
+    // Save user data to local storage
+    saveUserData(userData);
+    // Save user data to the server
+    await makeRequest({ payload: userData, onSuccess: (data) => console.log('data', data) });
 }
